@@ -21,9 +21,12 @@ public class Incidencia {
     private LocalDateTime fecha;
 
     @ManyToOne
-    @JoinColumn(name = "hotel_id")
     @ToString.Exclude
     private Hotel hotel;
+
+    @ManyToOne
+    @ToString.Exclude
+    private Empleado empleado;
 
 
 }

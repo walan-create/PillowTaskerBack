@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -28,7 +27,7 @@ public class Usuario {
     private Long id;
 
     private String nombre;
-    private String contraseña;
+    private String contrasenia;
 
     @Column(nullable = false)
     private String email;

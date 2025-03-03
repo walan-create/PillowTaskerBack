@@ -26,6 +26,9 @@ public class Hotel {
     @ToString.Exclude
     private Usuario usuario;
 
+    @OneToMany(mappedBy = "hotel" , fetch = FetchType.EAGER)
+    Set<Empleado> empleados = new HashSet<>();
+
     @OneToMany(mappedBy = "hotel", fetch = FetchType.EAGER)
     Set<Incidencia> incidencias = new HashSet<>();
 

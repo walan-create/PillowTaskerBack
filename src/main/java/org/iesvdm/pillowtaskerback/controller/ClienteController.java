@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("v1/api/clientes")
 @Controller
 public class ClienteController {
     private final ClienteService clienteService;

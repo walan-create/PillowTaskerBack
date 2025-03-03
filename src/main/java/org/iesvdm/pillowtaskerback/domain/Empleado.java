@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,10 +21,16 @@ public class Empleado {
     private String nombre;
     private String Apellido1;
     private String Apellido2;
-    private String contraseña;
+    private String contrasenia;
     private TipoEmpleadoEnum tipo;
 
     @ManyToOne
     @ToString.Exclude
     private Usuario usuario;
+
+    @ManyToOne
+    private Hotel hotel;
+
+    @OneToMany(mappedBy = "empleado", fetch = FetchType.EAGER)
+    Set<Incidencia> incidencias = new HashSet<>();
 }
