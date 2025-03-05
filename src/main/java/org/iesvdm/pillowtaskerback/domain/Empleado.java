@@ -1,5 +1,6 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -26,6 +28,7 @@ public class Empleado {
 
     @ManyToOne
     @ToString.Exclude
+    @JsonIgnore
     private Usuario usuario;
 
     @ManyToOne

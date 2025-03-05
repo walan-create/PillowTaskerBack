@@ -49,4 +49,9 @@ public class EmpleadoService {
                 .orElseThrow(()-> new EmpleadoNotFoundException(id));
     }
 
+    public List<Empleado> allByHotelId(Long hotelId){
+        return this.empleadoRepository.findAllByHotelId(hotelId);
+    }
+
+
 }

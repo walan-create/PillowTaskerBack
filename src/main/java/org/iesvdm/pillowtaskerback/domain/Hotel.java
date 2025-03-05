@@ -1,16 +1,17 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
-
+@Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
 public class Hotel {
 
     @Id
@@ -24,18 +25,22 @@ public class Hotel {
 
     @ManyToOne
     @ToString.Exclude
-    private Usuario usuario;
+    private Usuario owner;
 
-    @OneToMany(mappedBy = "hotel" , fetch = FetchType.EAGER)
-    Set<Empleado> empleados = new HashSet<>();
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY) //Evita que JPA cargue relaciones innecesarias
+    @JsonIgnore // 🔴 Evita problemas de serialización
+    private Set<Empleado> empleados = new HashSet<>();
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.EAGER)
-    Set<Incidencia> incidencias = new HashSet<>();
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Incidencia> incidencias = new HashSet<>();
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.EAGER)
-    Set<Habitacion> habitaciones = new HashSet<>();
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Habitacion> habitaciones = new HashSet<>();
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.EAGER)
-    Set<Invitacion> invitaciones = new HashSet<>();
-
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Invitacion> invitaciones = new HashSet<>();
 }
+

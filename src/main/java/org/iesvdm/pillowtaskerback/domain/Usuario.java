@@ -1,24 +1,20 @@
 package org.iesvdm.pillowtaskerback.domain;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id", scope = Usuario.class)
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Usuario.class)
 public class Usuario {
 
     @Id
@@ -27,15 +23,18 @@ public class Usuario {
     private Long id;
 
     private String nombre;
-    private String contrasenia;
 
-    @Column(nullable = false)
-    private String email;
+    @Column(nullable = false, unique = true)
+    private String email; // Usamos email en vez de username
 
-    @OneToMany (mappedBy = "usuario", fetch = FetchType.EAGER)
-    Set<Hotel> hotelesPropios = new HashSet<>();
+    private String password; // Renombrado para Spring Security
 
-    @OneToMany (mappedBy = "usuario", fetch = FetchType.EAGER)
-    Set<Empleado> empleados = new HashSet<>();
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Hotel> hotelesPropios = new HashSet<>();
 
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Empleado> empleados = new HashSet<>();
 }
+
