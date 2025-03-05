@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Invitacion {
+public class Invitation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,10 @@ public class Invitacion {
     private Long id;
 
     @Column(nullable = false)
-    private String email;
+    private String mail;
 
-    private EstadoInvitacionEnum estado;
-    private LocalDateTime fechaEnvio;
+    private EstadoInvitacionEnum state;
+    private LocalDateTime shippingDate;
 
     @ManyToOne
     @ToString.Exclude

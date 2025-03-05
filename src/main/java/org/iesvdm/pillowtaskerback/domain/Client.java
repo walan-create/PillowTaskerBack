@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Cliente {
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +24,16 @@ public class Cliente {
     @Column(unique = true)
     private String nif;
 
-    private String nombre;
-    private String apellido1;
-    private String apellido2;
-    private LocalDateTime fechaNacimiento;
-    private String nacional;
-    private String direccion;
-    private String codigoPostal;
-    private String telefono;
+    private String name;
+    private String surname1;
+    private String surname2;
+    private LocalDateTime birthDate;
+    private String nationality;
+    private String address;
+    private String postalCode;
+    private String phoneNumber;
 
     @ManyToMany
-    private Set<Reserva> reservas;
+    private Set<Reservation> reservations;
 
 }

@@ -1,9 +1,9 @@
 package org.iesvdm.pillowtaskerback.repository;
 
-import org.iesvdm.pillowtaskerback.domain.Habitacion;
+import org.iesvdm.pillowtaskerback.domain.Incidence;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HabitacionRepository extends JpaRepository<Habitacion,Long> {
+public interface IncidenceRepository extends JpaRepository<Incidence,Long> {
 }

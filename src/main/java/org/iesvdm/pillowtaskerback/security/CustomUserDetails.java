@@ -1,19 +1,14 @@
 package org.iesvdm.pillowtaskerback.security;
-import org.iesvdm.pillowtaskerback.domain.Usuario;
-
-
-import java.util.Collection;
-import java.util.Collections;
 /*
 public class CustomUserDetails implements UserDetails {
     private final Long id;
     private final String email;
     private final String password;
 
-    public CustomUserDetails(Usuario usuario) {
-        this.id = usuario.getId();
-        this.email = usuario.getEmail();
-        this.password = usuario.getPassword();
+    public CustomUserDetails(User user) {
+        this.id = user.getId();
+        this.email = user.getMail();
+        this.password = user.getPassword();
     }
 
     public Long getId() {

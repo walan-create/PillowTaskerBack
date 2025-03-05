@@ -1,8 +1,7 @@
 package org.iesvdm.pillowtaskerback.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.iesvdm.pillowtaskerback.domain.Incidencia;
-import org.iesvdm.pillowtaskerback.repository.IncidenciaRepository;
+import org.iesvdm.pillowtaskerback.domain.Incidence;
 import org.iesvdm.pillowtaskerback.service.IncidenciaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -14,35 +13,35 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/api/incidencias")
 @Controller
-public class IncidenciaController {
+public class IncidenceController {
     private final IncidenciaService incidenciaService;
 
-    public IncidenciaController(IncidenciaService incidenciaService){
+    public IncidenceController(IncidenciaService incidenciaService){
         this.incidenciaService = incidenciaService;
     }
 
     @GetMapping({"","/"})
-    public List<Incidencia> all() {
+    public List<Incidence> all() {
         log.info("Accediendo a todos los incidenciaes");
         return this.incidenciaService.all();
     }
 
     @PostMapping({"","/"})
-    public Incidencia newIncidencia(@RequestBody Incidencia incidencia){
-        log.info("Creando un incidencia = " + incidencia);
-        return this.incidenciaService.save(incidencia);
+    public Incidence newIncidencia(@RequestBody Incidence incidence){
+        log.info("Creando un incidence = " + incidence);
+        return this.incidenciaService.save(incidence);
     }
 
     @GetMapping("/{id}")
-    public Incidencia one(@PathVariable("id") Long id) {
+    public Incidence one(@PathVariable("id") Long id) {
         log.info("Buscar incidencia con id: " + id);
         return this.incidenciaService.one(id);
     }
 
     @PutMapping("/{id}")
-    public Incidencia replaceIncidencia(@PathVariable("id") Long id, @RequestBody Incidencia incidencia) {
-        log.info("Actualizar incidencia con id = " + id + "\n incidencia" + incidencia);
-        return this.incidenciaService.replace(id, incidencia);
+    public Incidence replaceIncidencia(@PathVariable("id") Long id, @RequestBody Incidence incidence) {
+        log.info("Actualizar incidence con id = " + id + "\n incidence" + incidence);
+        return this.incidenciaService.replace(id, incidence);
     }
 
     @ResponseBody

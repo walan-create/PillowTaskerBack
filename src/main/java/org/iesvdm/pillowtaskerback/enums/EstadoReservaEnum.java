@@ -1,9 +1,9 @@
 package org.iesvdm.pillowtaskerback.enums;
 
 public enum EstadoReservaEnum {
-    ACTIVA,
-    PENDIENTE,
+    ACTIVE,
+    PENDING,
     CHECKED_IN,
     CHECKED_OUT,
-    CANCELADA
+    CANCELED
 }

@@ -4,9 +4,9 @@ import org.iesvdm.pillowtaskerback.dto.HotelDTO;
 import org.iesvdm.pillowtaskerback.security.CustomUserDetails;
 import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
-import org.iesvdm.pillowtaskerback.domain.Usuario;
+import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
-import org.iesvdm.pillowtaskerback.repository.UsuarioRepository;
+import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HotelAuthenticationTests {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository usuarioRepository;
 
     @Autowired
     private HotelRepository hotelRepository;
@@ -32,7 +32,7 @@ public class HotelAuthenticationTests {
     @Autowired
     private HotelService hotelService;
 
-    private Usuario usuario;
+    private User user;
 
     @BeforeEach
     public void setUp() {
@@ -40,17 +40,17 @@ public class HotelAuthenticationTests {
         hotelRepository.deleteAll();
         usuarioRepository.deleteAll();
 
-        // Crear un usuario de ejemplo
-        usuario = new Usuario();
-        usuario.setNombre("Juan Pérez");
-        usuario.setEmail("juan.perez@ejemplo.com");
-        usuario.setPassword("password123");
+        // Crear un user de ejemplo
+        user = new User();
+        user.setName("Juan Pérez");
+        user.setMail("juan.perez@ejemplo.com");
+        user.setPassword("password123");
 
-        // Guardar el usuario en la base de datos
-        usuario = usuarioRepository.save(usuario);
+        // Guardar el user en la base de datos
+        user = usuarioRepository.save(user);
 
-        // Configurar el contexto de seguridad manualmente con el usuario guardado
-        CustomUserDetails customUserDetails = new CustomUserDetails(usuario);
+        // Configurar el contexto de seguridad manualmente con el user guardado
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
         // Crear un token de autenticación con el CustomUserDetails
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -65,12 +65,12 @@ public class HotelAuthenticationTests {
     @Test
     @Transactional
     public void testGetHotelsWithOwner() {
-        // Crear un hotel y asignar al usuario como propietario
+        // Crear un hotel y asignar al user como propietario
         Hotel hotel = new Hotel();
-        hotel.setNombre("Hotel de Juan");
-        hotel.setCodigoPostal("12345");
-        hotel.setDireccion("Calle de Ejemplo 123");
-        hotel.setUsuario(usuario);  // Asignamos el usuario como propietario del hotel
+        hotel.setName("Hotel de Juan");
+        hotel.setPostalCode("12345");
+        hotel.setAddress("Calle de Ejemplo 123");
+        hotel.setUser(user);  // Asignamos el user como propietario del hotel
 
         // Guardar el hotel en la base de datos
         hotel = hotelRepository.save(hotel);
@@ -83,7 +83,7 @@ public class HotelAuthenticationTests {
 
         // Verifica si el campo 'propio' está correctamente asignado
         HotelDTO hotelDTO = hotels.get(0);
-        assertTrue(hotelDTO.isPropio()); // Debería ser true, ya que el usuario autenticado es el dueño
+        assertTrue(hotelDTO.isPropio()); // Debería ser true, ya que el user autenticado es el dueño
     }
 }
 */

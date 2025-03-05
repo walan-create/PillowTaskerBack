@@ -1,12 +1,12 @@
 package org.iesvdm.pillowtaskerback;
 
-import org.iesvdm.pillowtaskerback.domain.Empleado;
+import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
-import org.iesvdm.pillowtaskerback.domain.Usuario;
+import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
-import org.iesvdm.pillowtaskerback.repository.EmpleadoRepository;
+import org.iesvdm.pillowtaskerback.repository.EmployeeRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
-import org.iesvdm.pillowtaskerback.repository.UsuarioRepository;
+import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HotelAdvancedTests {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private HotelRepository hotelRepository;
 
     @Autowired
-    private EmpleadoRepository empleadoRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -43,60 +43,60 @@ public class HotelAdvancedTests {
     @Transactional
     public void testCreateHotelAndAssignOwner() {
 
-        // Crear un usuario de ejemplo
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Juan Pérez");
-        usuario.setEmail("juan.perez@ejemplo.com");
-        usuario.setPassword("password123");
+        // Crear un user de ejemplo
+        User user = new User();
+        user.setName("Juan Pérez");
+        user.setMail("juan.perez@ejemplo.com");
+        user.setPassword("password123");
 
-        // Guardar el usuario en la base de datos
-        usuario = usuarioRepository.save(usuario);
+        // Guardar el user en la base de datos
+        user = userRepository.save(user);
 
-        // Crear un hotel y asignar al usuario como propietario
+        // Crear un hotel y asignar al user como propietario
         Hotel hotel = new Hotel();
-        hotel.setNombre("Hotel de Juan");
-        hotel.setCodigoPostal("12345");
-        hotel.setDireccion("Calle de Ejemplo 123");
-        hotel.setOwner(usuario);  // Asignamos el usuario como propietario del hotel
+        hotel.setName("Hotel de Juan");
+        hotel.setPostalCode("12345");
+        hotel.setAddress("Calle de Ejemplo 123");
+        hotel.setOwner(user);  // Asignamos el user como propietario del hotel
 
         // Guardar el hotel en la base de datos
         hotel = hotelRepository.save(hotel);
 
         // Verificar que el hotel se ha creado y que el propietario es el correcto
         assertNotNull(hotel.getId());
-        assertEquals("Hotel de Juan", hotel.getNombre());
-        assertEquals(usuario.getId(), hotel.getOwner().getId());
-        assertEquals("Juan Pérez", hotel.getOwner().getNombre());
-        assertEquals("juan.perez@ejemplo.com", hotel.getOwner().getEmail());
+        assertEquals("Hotel de Juan", hotel.getName());
+        assertEquals(user.getId(), hotel.getOwner().getId());
+        assertEquals("Juan Pérez", hotel.getOwner().getName());
+        assertEquals("juan.perez@ejemplo.com", hotel.getOwner().getMail());
     }
     @Test
     @Transactional
     public void testCreateMultipleHotelsAndAssignUsers() {
         // Crear y guardar dos usuarios
-        Usuario usuario2 = new Usuario();
-        usuario2.setNombre("Ana Gómez");
-        usuario2.setEmail("ana.gomez@ejemplo.com");
-        usuario2.setPassword("password456");
-        usuario2 = usuarioRepository.save(usuario2);
+        User user2 = new User();
+        user2.setName("Ana Gómez");
+        user2.setMail("ana.gomez@ejemplo.com");
+        user2.setPassword("password456");
+        user2 = userRepository.save(user2);
 
-        Usuario usuario3 = new Usuario();
-        usuario3.setNombre("Carlos López");
-        usuario3.setEmail("carlos.lopez@ejemplo.com");
-        usuario3.setPassword("password789");
-        usuario3 = usuarioRepository.save(usuario3);
+        User user3 = new User();
+        user3.setName("Carlos López");
+        user3.setMail("carlos.lopez@ejemplo.com");
+        user3.setPassword("password789");
+        user3 = userRepository.save(user3);
 
         // Crear y asignar hoteles a los usuarios
         Hotel hotel1 = new Hotel();
-        hotel1.setNombre("Hotel de Ana");
-        hotel1.setCodigoPostal("54321");
-        hotel1.setDireccion("Calle Ana 123");
-        hotel1.setOwner(usuario2);  // Asignamos a Ana como propietaria
+        hotel1.setName("Hotel de Ana");
+        hotel1.setPostalCode("54321");
+        hotel1.setAddress("Calle Ana 123");
+        hotel1.setOwner(user2);  // Asignamos a Ana como propietaria
 
         Hotel hotel2 = new Hotel();
-        hotel2.setNombre("Hotel de Carlos");
-        hotel2.setCodigoPostal("98765");
-        hotel2.setDireccion("Calle Carlos 456");
-        hotel2.setOwner(usuario3);  // Asignamos a Carlos como propietario
+        hotel2.setName("Hotel de Carlos");
+        hotel2.setPostalCode("98765");
+        hotel2.setAddress("Calle Carlos 456");
+        hotel2.setOwner(user3);  // Asignamos a Carlos como propietario
 
         // Guardamos los hoteles
         hotelRepository.save(hotel1);
@@ -107,65 +107,65 @@ public class HotelAdvancedTests {
         assertNotNull(hotel2.getId());
 
         // Verificar que los propietarios de los hoteles son los correctos
-        assertEquals(usuario2.getId(), hotel1.getOwner().getId());
-        assertEquals("Ana Gómez", hotel1.getOwner().getNombre());
+        assertEquals(user2.getId(), hotel1.getOwner().getId());
+        assertEquals("Ana Gómez", hotel1.getOwner().getName());
 
-        assertEquals(usuario3.getId(), hotel2.getOwner().getId());
-        assertEquals("Carlos López", hotel2.getOwner().getNombre());
+        assertEquals(user3.getId(), hotel2.getOwner().getId());
+        assertEquals("Carlos López", hotel2.getOwner().getName());
     }
     @Test
     @Transactional
     @Commit
     public void testCreateHotelAndAssignUserAndEmployees() {
 
-        // Creamos y guardamos usuario dueño de hotel
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Ana");
-        usuario.setEmail("ana.gomez@ejemplo.com");
-        usuario.setPassword("password321");
-        usuario = usuarioRepository.save(usuario);
+        // Creamos y guardamos user dueño de hotel
+        User user = new User();
+        user.setName("Ana");
+        user.setMail("ana.gomez@ejemplo.com");
+        user.setPassword("password321");
+        user = userRepository.save(user);
 
-        //Creamos y guardamos usuario para empleado
-        Usuario usuario2 = new Usuario();
-        usuario2.setNombre("xX_Carlitos2000_Xx");
-        usuario2.setEmail("elCarlos@gmail.com");
-        usuario2.setPassword("password123");
-        usuario2 = usuarioRepository.save(usuario2);
+        //Creamos y guardamos user para employee
+        User user2 = new User();
+        user2.setName("xX_Carlitos2000_Xx");
+        user2.setMail("elCarlos@gmail.com");
+        user2.setPassword("password123");
+        user2 = userRepository.save(user2);
 
-        //Creamos y guardamos Hotel asociado a su owner (Usuario)
+        //Creamos y guardamos Hotel asociado a su owner (User)
         Hotel hotel = new Hotel();
-        hotel.setNombre("Hotel de Ana");
-        hotel.setCodigoPostal("12345");
-        hotel.setDireccion("Calle Ficticia");
-        hotel.setOwner(usuario);
+        hotel.setName("Hotel de Ana");
+        hotel.setPostalCode("12345");
+        hotel.setAddress("Calle Ficticia");
+        hotel.setOwner(user);
         hotelRepository.save(hotel);
 
-        //Creamos y guardamos empleado asignando usuario
-        Empleado empleado = new Empleado();
-        empleado.setNombre("Carlos");
-        empleado.setApellido1("Gomez");
-        empleado.setApellido2("Grijalba");
-        empleado.setContrasenia("ContraHotelCarlos123");
-        empleado.setTipo(TipoEmpleadoEnum.RECEPCIONISTA);
-        empleado.setUsuario(usuario2);
-        empleado.setHotel(hotel);
-        empleadoRepository.save(empleado);
+        //Creamos y guardamos employee asignando user
+        Employee employee = new Employee();
+        employee.setName("Carlos");
+        employee.setSurname1("Gomez");
+        employee.setSurname2("Grijalba");
+        employee.setPassword("ContraHotelCarlos123");
+        employee.setType(TipoEmpleadoEnum.RECEPTIONIST);
+        employee.setUser(user2);
+        employee.setHotel(hotel);
+        employeeRepository.save(employee);
 
-        //Volvemos a guardar Hotel con el empleado
-        hotel.getEmpleados().add(empleado);
+        //Volvemos a guardar Hotel con el employee
+        hotel.getEmployees().add(employee);
         hotelRepository.save(hotel);
 
         // Verificar que el hotel se ha creado correctamente
         assertNotNull(hotel.getId());
 
         // Verificar que el propietario del hotel es correcto
-        assertEquals(usuario.getId(), hotel.getOwner().getId());
-        assertEquals("Ana", hotel.getOwner().getNombre());
+        assertEquals(user.getId(), hotel.getOwner().getId());
+        assertEquals("Ana", hotel.getOwner().getName());
 
-        // Verificar que el hotel tiene al empleado Carlos
-        assertTrue(hotel.getEmpleados().contains(empleado));
-        assertTrue(hotel.getEmpleados().stream()
-                .anyMatch(e -> "Carlos".equals(e.getNombre())));
+        // Verificar que el hotel tiene al employee Carlos
+        assertTrue(hotel.getEmployees().contains(employee));
+        assertTrue(hotel.getEmployees().stream()
+                .anyMatch(e -> "Carlos".equals(e.getName())));
     }
 
 }

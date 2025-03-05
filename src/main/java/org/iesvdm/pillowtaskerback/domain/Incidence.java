@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Incidencia {
+public class Incidence {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
-    private String titulo;
-    private String concepto;
-    private LocalDateTime fecha;
+    private String title;
+    private String concept;
+    private LocalDateTime date;
 
     @ManyToOne
     @ToString.Exclude
@@ -26,7 +26,7 @@ public class Incidencia {
 
     @ManyToOne
     @ToString.Exclude
-    private Empleado empleado;
+    private Employee employee;
 
 
 }

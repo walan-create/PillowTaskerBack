@@ -29,16 +29,16 @@ public class HotelTests {
     public void testCreateHotel() {
         // Crear un hotel de ejemplo
         Hotel hotel = new Hotel();
-        hotel.setNombre("Hotel de Prueba");
-        hotel.setCodigoPostal("12345");
-        hotel.setDireccion("Calle Ficticia 123");
+        hotel.setName("Hotel de Prueba");
+        hotel.setPostalCode("12345");
+        hotel.setAddress("Calle Ficticia 123");
 
         // Guardar el hotel
         Hotel savedHotel = hotelRepository.save(hotel);
 
         // Verificar que el hotel fue guardado
         assertNotNull(savedHotel.getId());
-        assertEquals("Hotel de Prueba", savedHotel.getNombre());
+        assertEquals("Hotel de Prueba", savedHotel.getName());
     }
 
     @Test
@@ -46,14 +46,14 @@ public class HotelTests {
     public void testGetAllHotels() {
         // Crear y guardar dos hoteles
         Hotel hotel1 = new Hotel();
-        hotel1.setNombre("Hotel 1");
-        hotel1.setCodigoPostal("12345");
-        hotel1.setDireccion("Calle A 1");
+        hotel1.setName("Hotel 1");
+        hotel1.setPostalCode("12345");
+        hotel1.setAddress("Calle A 1");
 
         Hotel hotel2 = new Hotel();
-        hotel2.setNombre("Hotel 2");
-        hotel2.setCodigoPostal("67890");
-        hotel2.setDireccion("Calle B 2");
+        hotel2.setName("Hotel 2");
+        hotel2.setPostalCode("67890");
+        hotel2.setAddress("Calle B 2");
 
         hotelRepository.save(hotel1);
         hotelRepository.save(hotel2);
@@ -70,18 +70,18 @@ public class HotelTests {
     public void testUpdateHotel() {
         // Crear y guardar un hotel
         Hotel hotel = new Hotel();
-        hotel.setNombre("Hotel Original");
-        hotel.setCodigoPostal("12345");
-        hotel.setDireccion("Calle Ficticia");
+        hotel.setName("Hotel Original");
+        hotel.setPostalCode("12345");
+        hotel.setAddress("Calle Ficticia");
 
         hotelRepository.save(hotel);
 
         // Actualizar el nombre del hotel
-        hotel.setNombre("Hotel Actualizado");
+        hotel.setName("Hotel Actualizado");
         Hotel updatedHotel = hotelRepository.save(hotel);
 
         // Verificar que el nombre ha sido actualizado
-        assertEquals("Hotel Actualizado", updatedHotel.getNombre());
+        assertEquals("Hotel Actualizado", updatedHotel.getName());
     }
 
     @Test
@@ -89,9 +89,9 @@ public class HotelTests {
     public void testDeleteHotel() {
         // Crear y guardar un hotel
         Hotel hotel = new Hotel();
-        hotel.setNombre("Hotel para Eliminar");
-        hotel.setCodigoPostal("12345");
-        hotel.setDireccion("Calle X");
+        hotel.setName("Hotel para Eliminar");
+        hotel.setPostalCode("12345");
+        hotel.setAddress("Calle X");
 
         hotelRepository.save(hotel);
 

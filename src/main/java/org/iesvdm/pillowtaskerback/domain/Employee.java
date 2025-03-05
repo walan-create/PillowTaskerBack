@@ -14,26 +14,26 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Empleado {
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
-    private String nombre;
-    private String Apellido1;
-    private String Apellido2;
-    private String contrasenia;
-    private TipoEmpleadoEnum tipo;
+    private String name;
+    private String surname1;
+    private String surname2;
+    private String password;
+    private TipoEmpleadoEnum type;
 
     @ManyToOne
     @ToString.Exclude
     @JsonIgnore
-    private Usuario usuario;
+    private User user;
 
     @ManyToOne
     private Hotel hotel;
 
-    @OneToMany(mappedBy = "empleado", fetch = FetchType.EAGER)
-    Set<Incidencia> incidencias = new HashSet<>();
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    Set<Incidence> incidences = new HashSet<>();
 }

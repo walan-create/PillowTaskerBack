@@ -13,6 +13,6 @@ public class HotelDTO {
     private String codigoPostal;
     private String direccion;
     private Integer numeroEmpleados;
-    private boolean propio;// Nuevo campo que indica si el usuario actual es el dueño del hotel
+    private boolean propio;// Nuevo campo que indica si el user actual es el dueño del hotel
 
 }

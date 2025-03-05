@@ -13,25 +13,25 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Habitacion {
+public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
-    private String numero;
-    private Integer capacidad;
-    private Integer cuartos;
-    private boolean cocina;
-    private TipoHabitacionEnum tipo;
-    private EstadoHabitacionEnum estado;
+    private String NumberRoom;
+    private Integer capacity;
+    private Integer roomsNumber;
+    private boolean kitchen;
+    private TipoHabitacionEnum type;
+    private EstadoHabitacionEnum state;
 
     @ManyToOne
     @ToString.Exclude
     private Hotel hotel;
 
     @ManyToMany
-    private Set<Reserva> reservas = new HashSet<>();
+    private Set<Reservation> reservations = new HashSet<>();
 
 }

@@ -1,16 +1,13 @@
 package org.iesvdm.pillowtaskerback.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.iesvdm.pillowtaskerback.domain.Empleado;
+import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
-import org.iesvdm.pillowtaskerback.dto.HotelDTO;
-import org.iesvdm.pillowtaskerback.repository.HotelRepository;
-import org.iesvdm.pillowtaskerback.service.EmpleadoService;
+import org.iesvdm.pillowtaskerback.service.EmployeeService;
 import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +18,7 @@ import java.util.List;
 public class HotelController {
 
     @Autowired
-    EmpleadoService empleadoService;
+    EmployeeService employeeService;
     private final HotelService hotelService;
 
     public HotelController(HotelService hotelService){
@@ -64,10 +61,10 @@ public class HotelController {
         this.hotelService.delete(id);
     }
 
-    @GetMapping("/{hotelId}/empleados")
-    public ResponseEntity<List<Empleado>> getEmpleadosPorHotel(@PathVariable Long hotelId) {
-        return ResponseEntity.ok(empleadoService.allByHotelId(hotelId));
-    }
+//    @GetMapping("/{hotelId}/empleados")
+//    public ResponseEntity<List<Employee>> getEmpleadosPorHotel(@PathVariable Long hotelId) {
+//        return ResponseEntity.ok(employeeService.allByHotelId(hotelId));
+//    }
 
 }
 

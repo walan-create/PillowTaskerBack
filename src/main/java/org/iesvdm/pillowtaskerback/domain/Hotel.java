@@ -19,28 +19,28 @@ public class Hotel {
     @EqualsAndHashCode.Include
     private Long id;
 
-    private String nombre;
-    private String codigoPostal;
-    private String direccion;
+    private String name;
+    private String postalCode;
+    private String address;
 
     @ManyToOne
     @ToString.Exclude
-    private Usuario owner;
+    private User owner;
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY) //Evita que JPA cargue relaciones innecesarias
     @JsonIgnore // 🔴 Evita problemas de serialización
-    private Set<Empleado> empleados = new HashSet<>();
+    private Set<Employee> employees = new HashSet<>();
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<Incidencia> incidencias = new HashSet<>();
+    private Set<Incidence> incidences = new HashSet<>();
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<Habitacion> habitaciones = new HashSet<>();
+    private Set<Room> rooms = new HashSet<>();
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<Invitacion> invitaciones = new HashSet<>();
+    private Set<Invitation> invitations = new HashSet<>();
 }
 

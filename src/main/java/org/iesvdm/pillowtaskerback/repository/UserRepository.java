@@ -1,14 +1,14 @@
 package org.iesvdm.pillowtaskerback.repository;
 
-import org.iesvdm.pillowtaskerback.domain.Usuario;
+import org.iesvdm.pillowtaskerback.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
+public interface UserRepository extends JpaRepository<User,Long> {
 
-    Optional<Usuario> findByEmail(String email);
+    Optional<User> findByMail(String email);
 
 }
 
