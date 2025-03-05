@@ -5,14 +5,23 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
+import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
+import org.iesvdm.pillowtaskerback.exception.EmpleadoNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.EmployeeRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
+import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +31,9 @@ public class HotelService {
 
     @Autowired
     EmployeeRepository employeeRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -60,54 +72,54 @@ public class HotelService {
                 .orElseThrow(()-> new HotelNotFoundException(id));
     }
 
+    @Transactional
+    public Hotel createHotelForUser(Long userId, Hotel hotel) {
+        // Comprobar si el User existe
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsuarioNotFoundException(userId));
+
+        // Asignamos el User como el propietario del hotel
+        hotel.setOwner(user);
+
+        // Guardamos el hotel con el dueño asignado
+        return hotelRepository.save(hotel);
+    }
+
     //Extras
     @Transactional
-    public List<HotelDTO> getAllHotelsDTOByUserId(Long userId) {
-        // Obtener el ID del user autenticado
-        //Long authenticatedUserId = getAuthenticatedUserId();
+    public List<HotelDTO> getAllHotelsDTOByOwnerIdOrEmployeeId(Long userId) {
 
-        // Obtener todos los hoteles
-        List<Hotel> hotels = hotelRepository.findAll();
+        // Obtener los hoteles cuyo propietario es el `userId`
+        Set<Hotel> hotelsByOwner = hotelRepository.findAllByOwner_Id(userId);
 
-        // Mapear los hoteles a HotelDTO y agregar el campo 'propio'
-        return hotels.stream()
-                .map(hotel -> {
-                    // Verificar si el user autenticado es el dueño del hotel
-                    //Boolean isOwner = hotel.getUser().getId().equals(authenticatedUserId);
+        // Obtener los hoteles que tienen un empleado cuyo `user` es el `userId`
+        Set<Hotel> hotelsByEmployee = hotelRepository.findAllByEmployees_User_Id(userId);
 
-                    // Crear el DTO con todos los datos del hotel y el campo 'propio'
-                    return new HotelDTO(
-                            hotel.getId(),
-                            hotel.getName(),
-                            hotel.getPostalCode(),
-                            hotel.getAddress(),
-                            hotel.getEmployees().size(),
-                            false
-                            //isOwner // Si el user autenticado es dueño, el valor será 'true'
-                    );
-                })
+        // Combinar ambos hoteles sin repeticiones
+        Set<Hotel> allHotels = new HashSet<>(hotelsByOwner);
+        allHotels.addAll(hotelsByEmployee);
+
+        // Mapear los hoteles a HotelDTO
+        return allHotels.stream()
+                .map(hotel -> new HotelDTO(
+                        hotel.getId(),
+                        hotel.getName(),
+                        hotel.getPostalCode(),
+                        hotel.getAddress(),
+                        hotel.getEmployees().size(), //Calculamos el total de los empleados por hotel
+                        hotel.getOwner().getId() //Asociamos el id del dueño
+                ))
                 .collect(Collectors.toList());
     }
 
-    public void deleteEmpleadoFromHotel(Long id, Long hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow();
-        Employee employee = employeeRepository.findById(id).orElseThrow();
+    public void deleteEmployeeFromHotel(Long id, Long hotelId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmpleadoNotFoundException(id));
         hotel.getEmployees().remove(employee);
         hotelRepository.save(hotel);
         employeeRepository.delete(employee);
     }
 
-    /*// Método auxiliar para obtener el ID del user autenticado
-    private Long getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Verifica si el principal es una instancia de CustomUserDetails
-        if (authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            return userDetails.getId(); // Devuelve el ID del user autenticado
-        } else {
-            // Si el principal no es CustomUserDetails, lanza una excepción o maneja el error
-            throw new IllegalStateException("User autenticado no es de tipo CustomUserDetails");
-        }
-    }*/
 }

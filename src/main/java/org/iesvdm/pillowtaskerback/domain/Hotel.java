@@ -25,21 +25,26 @@ public class Hotel {
 
     @ManyToOne
     @ToString.Exclude
+    @JsonIgnore
     private User owner;
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY) //Evita que JPA cargue relaciones innecesarias
-    @JsonIgnore // 🔴 Evita problemas de serialización
+    // Relación con empleados, usando CascadeType.ALL
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore // Evita problemas de serialización
     private Set<Employee> employees = new HashSet<>();
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    // Relación con incidencias, usando CascadeType.ALL
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Incidence> incidences = new HashSet<>();
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    // Relación con habitaciones, usando CascadeType.ALL
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Room> rooms = new HashSet<>();
 
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    // Relación con invitaciones, usando CascadeType.ALL
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Invitation> invitations = new HashSet<>();
 }

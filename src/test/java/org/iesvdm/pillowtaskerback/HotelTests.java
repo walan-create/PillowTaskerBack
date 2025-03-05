@@ -76,11 +76,11 @@ public class HotelTests {
 
         hotelRepository.save(hotel);
 
-        // Actualizar el nombre del hotel
+        // Actualizar el name del hotel
         hotel.setName("Hotel Actualizado");
         Hotel updatedHotel = hotelRepository.save(hotel);
 
-        // Verificar que el nombre ha sido actualizado
+        // Verificar que el name ha sido actualizado
         assertEquals("Hotel Actualizado", updatedHotel.getName());
     }
 

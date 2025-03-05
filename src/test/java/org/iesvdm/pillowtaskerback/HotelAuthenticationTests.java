@@ -81,9 +81,9 @@ public class HotelAuthenticationTests {
         assertNotNull(hotels);
         assertFalse(hotels.isEmpty());
 
-        // Verifica si el campo 'propio' está correctamente asignado
+        // Verifica si el campo 'owner' está correctamente asignado
         HotelDTO hotelDTO = hotels.get(0);
-        assertTrue(hotelDTO.isPropio()); // Debería ser true, ya que el user autenticado es el dueño
+        assertTrue(hotelDTO.isOwner()); // Debería ser true, ya que el user autenticado es el dueño
     }
 }
 */

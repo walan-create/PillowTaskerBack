@@ -15,7 +15,8 @@ import org.springframework.test.annotation.Commit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest // Carga solo la capa de persistencia y usa una BD en memoria (H2)
-class EmployeeRepositoryTest {
+class LoadDBTests
+{
 
     @Autowired
     private EmployeeRepository employeeRepository;

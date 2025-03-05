@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("v1/api/empleados")
+@RequestMapping("v1/api/employees")
 @Controller
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("/{empleadoId}")
-    public ResponseEntity<Employee> getEmpleado(@PathVariable Long empleadoId) {
-        return ResponseEntity.ok(employeeService.one(empleadoId));
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<Employee> getEmployee(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(employeeService.one(employeeId));
     }
 
-    @DeleteMapping("/{empleadoId}")
-    public ResponseEntity<Void> deleteEmpleado(@PathVariable Long empleadoId) {
-        employeeService.delete(empleadoId);
+    @DeleteMapping("/{employeeId}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long employeeId) {
+        employeeService.delete(employeeId);
         return ResponseEntity.noContent().build();
     }
     /*
