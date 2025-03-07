@@ -7,6 +7,8 @@ import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
+import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateEmployee;
+import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
 import org.iesvdm.pillowtaskerback.exception.EmpleadoNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
@@ -37,8 +39,7 @@ public class HotelService {
 
     @PersistenceContext
     EntityManager entityManager;
-    @Autowired
-    private EmployeeService employeeService;
+
 
     public List<Hotel> all(){return this.hotelRepository.findAll();}
 
@@ -56,12 +57,15 @@ public class HotelService {
     }
 
     @Transactional
-    public Hotel replace(Long id, Hotel hotel) {
-        return this.hotelRepository.findById(id)  // Busca el hotel con el ID proporcionado.
-                .map(h -> (id.equals(hotel.getId())  // Compara el ID proporcionado con el del objeto hotel.
-                        ? this.hotelRepository.save(hotel)  // Si son iguales, guarda el nuevo hotel en la base de datos.
-                        : null))  // Si los IDs no coinciden, devuelve null.
-                .orElseThrow(() -> new HotelNotFoundException(id));  // Si no se encuentra el hotel con ese ID, lanza una excepción.
+    public Hotel replace(Long id, Hotel hotelDetails) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new EmpleadoNotFoundException(id));
+
+        hotel.setName(hotelDetails.getName());
+        hotel.setPostalCode(hotelDetails.getPostalCode());
+        hotel.setAddress(hotelDetails.getAddress());
+
+        return hotelRepository.save(hotel);
     }
 
     @Transactional
@@ -73,16 +77,35 @@ public class HotelService {
     }
 
     @Transactional
-    public Hotel createHotelForUser(Long userId, Hotel hotel) {
+    public Hotel createHotelForUser(Long userId, HotelDTOAutoCreateEmployee dto) {
         // Comprobar si el User existe
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsuarioNotFoundException(userId));
 
-        // Asignamos el User como el propietario del hotel
-        hotel.setOwner(user);
+        // Crear y asignar el hotel al usuario
+        Hotel hotel = new Hotel();
+        hotel.setName(dto.getName());
+        hotel.setPostalCode(dto.getPostalCode());
+        hotel.setAddress(dto.getAddress());
+        hotel.setOwner(user); // Asignamos el User como el propietario del hotel
 
         // Guardamos el hotel con el dueño asignado
-        return hotelRepository.save(hotel);
+        save(hotel);
+
+        // Autogeneramos el Empleado para el usuario que ha creado el hotel y le Asignamos el rol ADMIN
+        Employee employee = new Employee();
+        employee.setName(dto.getEmployeeName());
+        employee.setSurname1(dto.getSurname1());
+        employee.setSurname2(dto.getSurname2());
+        employee.setPassword(dto.getPassword());
+        employee.setType(TipoEmpleadoEnum.ADMIN);
+        employee.setUser(user);
+        employee.setHotel(hotel);
+
+        // Guardar el empleado
+        employeeRepository.save(employee);
+
+        return hotel;
     }
 
     //Extras
@@ -112,6 +135,7 @@ public class HotelService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteEmployeeFromHotel(Long id, Long hotelId) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new HotelNotFoundException(hotelId));

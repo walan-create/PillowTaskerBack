@@ -2,18 +2,21 @@ package org.iesvdm.pillowtaskerback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
+// Restricción (Cada usuario solo podrá tener 1 empleado por hotel)
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "hotel_id"}))
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +26,21 @@ public class Employee {
     private String name;
     private String surname1;
     private String surname2;
+    @Column(unique = true)
+    private String dni;
     private String password;
     private TipoEmpleadoEnum type;
 
     @ManyToOne
-    @ToString.Exclude
     @JsonIgnore
+    @NotNull // Evita que llegue null desde la API
+    @JoinColumn(name = "user_id", nullable = false) // Evita null en la BD
     private User user;
 
     @ManyToOne
+    @JsonIgnore
+    @NotNull
+    @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)

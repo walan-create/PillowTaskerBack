@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
+import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateEmployee;
 import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.iesvdm.pillowtaskerback.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,25 +22,58 @@ public class UserController {
 
     @Autowired
     private final UserService userService;
+    @Autowired
     private final HotelService hotelService;
 
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.all());
+    }
+
+    // GET ONE
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.one(userId));
     }
 
-    // Crear un hotel para un usuario específico
+    // CREATE
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        log.info("Updating user with id: {}", id);
+        User updatedUser = userService.replace(id, user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /*--------------------------------------------------*/
+    /*---------------CRUD PARCIAL HOTEL-----------------*/
+    /*--------------------------------------------------*/
+
+    // CREATE con User asociado
     @PostMapping("/{userId}/hotels")
-    public ResponseEntity<Hotel> createHotelForUser(@PathVariable Long userId, @RequestBody Hotel hotel) {
-        Hotel createdHotel = hotelService.createHotelForUser(userId, hotel);
+    public ResponseEntity<Hotel> createHotelForUser(@PathVariable Long userId, @RequestBody HotelDTOAutoCreateEmployee dto) {
+        Hotel createdHotel = hotelService.createHotelForUser(userId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdHotel);
     }
 
+    // GET todos los hoteles a los que pertenece un usuario (ya sea como Owner o Employee)
     @GetMapping("/{userId}/hotels")
     public ResponseEntity<List<HotelDTO>> getAllHotelsByUserId(@PathVariable Long userId) {
-        // Llamar al servicio para obtener los hoteles donde el usuario es dueño o tiene empleados
         List<HotelDTO> hotelDTOs = hotelService.getAllHotelsDTOByOwnerIdOrEmployeeId(userId);
         return ResponseEntity.ok(hotelDTOs);
     }
-
 }

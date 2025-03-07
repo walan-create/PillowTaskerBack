@@ -1,12 +1,16 @@
 package org.iesvdm.pillowtaskerback;
 
+import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.User;
+import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateEmployee;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
+import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.EmployeeRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
+import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,64 +31,106 @@ class LoadDBTests
     @Autowired
     private HotelRepository hotelRepository;
 
+    @Autowired
+    private HotelService hotelService;
+
     @Test
+    @Transactional
     @Commit
-    void testSaveAndRetrieveUsersAndEmployees() {
-        // Crear Dueño del Hotel
-        User owner = User.builder()
-                .name("Carlos Owner")
-                .mail("carlos.owner@example.com")
-                .build();
-        owner = userRepository.save(owner);
+    void testCreateUsers() {
 
-        // Crear Hotel con el dueño
-        Hotel hotel = Hotel.builder()
-                .name("Hotel Paradise")
-                .address("Main Street 123, Madrid")
-                .postalCode("29645")
-                .owner(owner) // Asignamos el user dueño del hotel
-                .build();
-        hotel = hotelRepository.save(hotel);
+        /*--------------------------------------------------*/
+        /*--------------------CEATE USERS-------------------*/
+        /*--------------------------------------------------*/
 
-        // Crear Employee 1
         User user1 = User.builder()
-                .name("xX_JuanDestroyer_Xx")
-                .mail("juan.perez@example.com")
+                .name("Marta La Jefa")
+                .mail("martitaLaJefa@example.com")
                 .build();
         user1 = userRepository.save(user1);
 
-        Employee employee1 = Employee.builder()
-                .name("Juan")
-                .surname1("Pérez")
-                .surname2("Gómez")
-                .password("password123")
-                .type(TipoEmpleadoEnum.RECEPTIONIST)
-                .user(user1) //Asignamos el user al que corresponde este empleado
-                .hotel(hotel)
-                .build();
-        employeeRepository.save(employee1);
-
-        // Crear Employee 2
         User user2 = User.builder()
-                .name("Anita")
-                .mail("ana.lopez@example.com")
+                .name("xX_CarlitosDestroyer_Xx")
+                .mail("carlos2004@example.com")
                 .build();
         user2 = userRepository.save(user2);
 
-        Employee employee2 = Employee.builder()
-                .name("Ana")
-                .surname1("López")
-                .surname2("Martínez")
-                .password("securePass456")
-                .type(TipoEmpleadoEnum.CLEANER)
-                .user(user2) //Asignamos el user al que corresponde este empleado
-                .hotel(hotel)
+        User user3 = User.builder()
+                .name("Ana Lover UwU")
+                .mail("ana7@example.com")
                 .build();
-        employeeRepository.save(employee2);
+        user3 = userRepository.save(user3);
 
-        // Verificar que los employees se guardaron correctamente
-        assertThat(employeeRepository.count()).isEqualTo(2);
-        assertThat(userRepository.count()).isEqualTo(3); // Dueño + 2 employees
-        assertThat(hotelRepository.count()).isEqualTo(1);
+        User user4 = User.builder()
+                .name("Luis a secas")
+                .mail("pedrogomez123@example.com")
+                .build();
+        user4 = userRepository.save(user4);
+
+        User user5 = User.builder()
+                .name("Pablo Random")
+                .mail("martinex@example.com")
+                .build();
+        user5 = userRepository.save(user5);
+
+        /*--------------------------------------------------*/
+        /*-------------------CEATE HOTELS-------------------*/
+        /*--------------------------------------------------*/
+
+        // Crear un hotel con el primer usuario (Marta)
+        HotelDTOAutoCreateEmployee hotelDTO = HotelDTOAutoCreateEmployee.builder()
+                .name("Hotel Paradise")
+                .address("Calle loh Cordoneh, Cadih")
+                .postalCode("29645")
+                .employeeName("Marta")
+                .surname1("Ramírez")
+                .surname2("Castro")
+                .dni("12345678A")
+                .build();
+        // Crear un hotel con el primer usuario (Marta) y autogeneramos un empleado con rol ADMIN
+        Hotel hotel = hotelService.createHotelForUser(user1.getId(),hotelDTO);
+
+        /*--------------------------------------------------*/
+        /*------------------CEATE EMPLOYEES-----------------*/
+        /*--------------------------------------------------*/
+
+//        Employee employee2 = Employee.builder()
+//                .name("Ana")
+//                .surname1("López")
+//                .surname2("Martínez")
+//                .password("securePass456")
+//                .type(TipoEmpleadoEnum.CLEANER)
+//                .user(user3) // Asignamos el user3 como empleado
+//                .hotel(hotel)
+//                .build();
+//        employee2 = employeeRepository.save(employee2);
+//
+//        Employee employee3 = Employee.builder()
+//                .name("Pedro")
+//                .surname1("Gómez")
+//                .surname2("Pérez")
+//                .password("pedroPass789")
+//                .type(TipoEmpleadoEnum.ADMIN)
+//                .user(user4) // Asignamos el user4 como empleado
+//                .hotel(hotel)
+//                .build();
+//        employee3 = employeeRepository.save(employee3);
+//
+//        Employee employee4 = Employee.builder()
+//                .name("Luis")
+//                .surname1("Martínez")
+//                .surname2("Rodríguez")
+//                .password("luisPass321")
+//                .type(TipoEmpleadoEnum.RECEPTIONIST)
+//                .user(user5) // Asignamos el user5 como empleado
+//                .hotel(hotel)
+//                .build();
+//        employee4 = employeeRepository.save(employee4);
+//
+//        // Verificar que se han guardado correctamente
+//        assertThat(userRepository.count()).isEqualTo(6); // 6 usuarios
+//        assertThat(employeeRepository.count()).isEqualTo(6); // 6 empleados (1 por usuario)
+//        assertThat(hotelRepository.count()).isEqualTo(1); // 1 hotel
     }
+
 }

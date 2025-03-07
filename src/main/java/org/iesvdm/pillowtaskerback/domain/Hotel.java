@@ -1,7 +1,10 @@
 package org.iesvdm.pillowtaskerback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.HashSet;
@@ -23,9 +26,9 @@ public class Hotel {
     private String postalCode;
     private String address;
 
-    @ManyToOne
-    @ToString.Exclude
-    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @NotNull // Evita que llegue null desde la API
+    @JoinColumn(name = "owner_id", nullable = false) // Asegura que en la BD no pueda ser NULL
     private User owner;
 
     // Relación con empleados, usando CascadeType.ALL

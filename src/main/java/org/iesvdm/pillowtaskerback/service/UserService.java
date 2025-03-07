@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.User;
+import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,15 @@ public class UserService {
                 .orElseThrow(()->new UsuarioNotFoundException(id));
     }
 
-    public User replace(Long id, User user) {
-        return this.userRepository.findById(id)  // Busca el user con el ID proporcionado.
-                .map(h -> (id.equals(user.getId())  // Compara el ID proporcionado con el del objeto user.
-                        ? this.userRepository.save(user)  // Si son iguales, guarda el nuevo user en la base de datos.
-                        : null))  // Si los IDs no coinciden, devuelve null.
-                .orElseThrow(() -> new UsuarioNotFoundException(id));  // Si no se encuentra el user con ese ID, lanza una excepción.
+    public User replace(Long id, User userDetails) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
+
+        user.setName(userDetails.getName());
+        user.setMail(userDetails.getMail());
+        user.setPassword(userDetails.getPassword());
+
+        return userRepository.save(user);
     }
 
     public void delete (Long id){

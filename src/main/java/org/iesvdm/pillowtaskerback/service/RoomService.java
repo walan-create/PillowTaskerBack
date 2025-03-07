@@ -3,8 +3,15 @@ package org.iesvdm.pillowtaskerback.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.iesvdm.pillowtaskerback.domain.Employee;
+import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Room;
+import org.iesvdm.pillowtaskerback.domain.User;
+import org.iesvdm.pillowtaskerback.exception.EmpleadoNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HabitacionNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
+import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +23,13 @@ public class RoomService {
     @Autowired
     RoomRepository roomRepository;
 
+    @Autowired
+    HotelService hotelService;
+
     @PersistenceContext
     EntityManager entityManager;
+    @Autowired
+    private HotelRepository hotelRepository;
 
     public List<Room> all(){return this.roomRepository.findAll();}
 
@@ -33,12 +45,18 @@ public class RoomService {
                 .orElseThrow(()->new HabitacionNotFoundException(id));
     }
 
-    public Room replace(Long id, Room room) {
-        return this.roomRepository.findById(id)  // Busca el room con el ID proporcionado.
-                .map(h -> (id.equals(room.getId())  // Compara el ID proporcionado con el del objeto room.
-                        ? this.roomRepository.save(room)  // Si son iguales, guarda el nuevo room en la base de datos.
-                        : null))  // Si los IDs no coinciden, devuelve null.
-                .orElseThrow(() -> new HabitacionNotFoundException(id));  // Si no se encuentra el room con ese ID, lanza una excepción.
+    @Transactional
+    public Room replace(Long id, Room roomDetails) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new EmpleadoNotFoundException(id));
+        room.setNumberRoom(roomDetails.getNumberRoom());
+        room.setCapacity(roomDetails.getCapacity());
+        room.setRoomsNumber(roomDetails.getRoomsNumber());
+        room.setKitchen(roomDetails.isKitchen());
+        room.setType(roomDetails.getType());
+        room.setState(roomDetails.getState());
+
+        return roomRepository.save(room);
     }
 
     public void delete (Long id){
@@ -46,6 +64,23 @@ public class RoomService {
                     this.roomRepository.delete(h);
                     return h; })
                 .orElseThrow(()-> new HabitacionNotFoundException(id));
+    }
+
+    public List<Room> getRoomsByHotel(Long hotelId){
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+
+        return this.roomRepository.findAllByHotel_id(hotelId);
+    }
+
+    public Room createRoom(Long hotelId, Room room) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+
+        room.setHotel(hotel);
+        hotel.getRooms().add(room);
+        hotelService.save(hotel);
+        return roomRepository.save(room);
     }
 
 }
