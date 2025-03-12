@@ -78,7 +78,7 @@ public class HotelService {
 
     @Transactional
     public Hotel createHotelForUser(Long userId, HotelDTOAutoCreateEmployee dto) {
-        // Comprobar si el User existe
+        // Obtenemos el usuario que va a crear el hotel
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsuarioNotFoundException(userId));
 
@@ -87,24 +87,27 @@ public class HotelService {
         hotel.setName(dto.getName());
         hotel.setPostalCode(dto.getPostalCode());
         hotel.setAddress(dto.getAddress());
-        hotel.setOwner(user); // Asignamos el User como el propietario del hotel
+        // Asignamos el User como el propietario del hotel
+        // ↓    ↓   ↓   ↓   ↓
+        hotel.setOwner(user);
 
         // Guardamos el hotel con el dueño asignado
         save(hotel);
 
-        // Autogeneramos el Empleado para el usuario que ha creado el hotel y le Asignamos el rol ADMIN
+        /* Autogeneramos el Empleado para el usuario
+          que ha creado el hotel y le Asignamos el rol ADMIN*/
         Employee employee = new Employee();
         employee.setName(dto.getEmployeeName());
         employee.setSurname1(dto.getSurname1());
         employee.setSurname2(dto.getSurname2());
         employee.setPassword(dto.getPassword());
+        employee.setDni(dto.getDni());
         employee.setType(TipoEmpleadoEnum.ADMIN);
         employee.setUser(user);
         employee.setHotel(hotel);
 
         // Guardar el empleado
         employeeRepository.save(employee);
-
         return hotel;
     }
 

@@ -16,7 +16,6 @@ import java.util.List;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-
     @PersistenceContext
     EntityManager entityManager;
 
@@ -51,5 +50,4 @@ public class UserService {
                     return h; })
                 .orElseThrow(()-> new UsuarioNotFoundException(id));
     }
-
 }

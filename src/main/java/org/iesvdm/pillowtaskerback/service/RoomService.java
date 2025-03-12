@@ -79,8 +79,8 @@ public class RoomService {
 
         room.setHotel(hotel);
         hotel.getRooms().add(room);
-        hotelService.save(hotel);
         return roomRepository.save(room);
     }
+
 
 }

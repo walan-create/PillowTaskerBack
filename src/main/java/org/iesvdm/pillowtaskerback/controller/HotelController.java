@@ -121,19 +121,16 @@ public class HotelController {
     public ResponseEntity<List<Room>> getAllRooms() {
         return ResponseEntity.ok(roomService.all());
     }
-
     // GET ALL por Hotel
     @GetMapping("/{hotelId}/rooms")
     public ResponseEntity<List<Room>> getRoomsByHotel(@PathVariable Long hotelId) {
         return ResponseEntity.ok(roomService.getRoomsByHotel(hotelId));
     }
-
     // GET ONE
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<Room> getRoom(@PathVariable Long roomId) {
         return ResponseEntity.ok(roomService.one(roomId));
     }
-
     // CREATE con Hotel y User asociado
     @PostMapping("/{hotelId}/rooms")
     public ResponseEntity<Room> createRoom(
@@ -142,7 +139,6 @@ public class HotelController {
         Room createdRoom = roomService.createRoom(hotelId, room);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRoom);
     }
-
     // UPDATE
     @PutMapping("/rooms/{roomId}")
     public ResponseEntity<Room> updateRoom(@PathVariable Long roomId, @RequestBody Room room) {
@@ -150,7 +146,6 @@ public class HotelController {
         Room updatedRoom = roomService.replace(roomId, room);
         return ResponseEntity.ok(updatedRoom);
     }
-
     // DELETE
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId) {

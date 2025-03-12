@@ -30,32 +30,28 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.all());
     }
-
     // GET ONE
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.one(userId));
     }
-
     // CREATE
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-
     // UPDATE
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        log.info("Updating user with id: {}", id);
-        User updatedUser = userService.replace(id, user);
+    @PutMapping("/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user) {
+        log.info("Updating user with id: {}", userId);
+        User updatedUser = userService.replace(userId, user);
         return ResponseEntity.ok(updatedUser);
     }
-
     // DELETE
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.delete(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.delete(userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -65,7 +61,10 @@ public class UserController {
 
     // CREATE con User asociado
     @PostMapping("/{userId}/hotels")
-    public ResponseEntity<Hotel> createHotelForUser(@PathVariable Long userId, @RequestBody HotelDTOAutoCreateEmployee dto) {
+    public ResponseEntity<Hotel> createHotelForUser(
+            @PathVariable Long userId,
+            @RequestBody HotelDTOAutoCreateEmployee dto) {
+
         Hotel createdHotel = hotelService.createHotelForUser(userId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdHotel);
     }

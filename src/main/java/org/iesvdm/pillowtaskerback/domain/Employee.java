@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-// Restricción (Cada usuario solo podrá tener 1 empleado por hotel)
+// Restricción de unicidad (Cada usuario solo podrá tener 1 empleado por hotel)
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "hotel_id"}))
 public class Employee {
     @Id
@@ -26,7 +26,6 @@ public class Employee {
     private String name;
     private String surname1;
     private String surname2;
-    @Column(unique = true)
     private String dni;
     private String password;
     private TipoEmpleadoEnum type;

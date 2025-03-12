@@ -29,24 +29,21 @@ public class Hotel {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @NotNull // Evita que llegue null desde la API
     @JoinColumn(name = "owner_id", nullable = false) // Asegura que en la BD no pueda ser NULL
+    // @JsonIgnore
     private User owner;
 
-    // Relación con empleados, usando CascadeType.ALL
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore // Evita problemas de serialización
-    private Set<Employee> employees = new HashSet<>();
-
-    // Relación con incidencias, usando CascadeType.ALL
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Incidence> incidences = new HashSet<>();
+    private Set<Employee> employees = new HashSet<>();
 
-    // Relación con habitaciones, usando CascadeType.ALL
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Room> rooms = new HashSet<>();
 
-    // Relación con invitaciones, usando CascadeType.ALL
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Incidence> incidences = new HashSet<>();
+
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Invitation> invitations = new HashSet<>();

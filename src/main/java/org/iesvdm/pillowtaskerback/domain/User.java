@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.HashSet;
@@ -23,12 +27,18 @@ public class User {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "El correo no puede estar vacío")
+    @Email(message = "Debe ser un correo válido") // Valida formato de correo
     @Column(nullable = false, unique = true)
-    private String mail; // Usamos email en vez de username
+    private String mail;
 
-    private String password; // Renombrado para Spring Security
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Column(nullable = false)
+    private String password;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
