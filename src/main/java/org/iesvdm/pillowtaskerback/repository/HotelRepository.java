@@ -12,5 +12,6 @@ public interface HotelRepository extends JpaRepository<Hotel,Long> {
 
     Set<Hotel> findAllByOwner_Id(Long ownerId);
 
-    Set<Hotel> findAllByEmployees_User_Id(Long userId);
+    Set<Hotel> findAllByCredentials_User_Id(Long userId);
+
 }

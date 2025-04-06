@@ -1,10 +1,7 @@
 package org.iesvdm.pillowtaskerback.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -35,5 +32,9 @@ public class Client {
 
     @ManyToMany
     private Set<Reservation> reservations;
+
+    @ManyToOne
+    @ToString.Exclude
+    private Hotel hotel;
 
 }

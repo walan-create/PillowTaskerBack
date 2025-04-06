@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.User;
-import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +35,12 @@ public class UserService {
     public User replace(Long id, User userDetails) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNotFoundException(id));
-
-        user.setName(userDetails.getName());
         user.setMail(userDetails.getMail());
         user.setPassword(userDetails.getPassword());
+        user.setName(userDetails.getName());
+        user.setSurname1(userDetails.getSurname1());
+        user.setSurname2(userDetails.getSurname2());
+        user.setDni(userDetails.getDni());
 
         return userRepository.save(user);
     }

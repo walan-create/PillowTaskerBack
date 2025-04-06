@@ -1,16 +1,14 @@
 package org.iesvdm.pillowtaskerback.controller;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.iesvdm.pillowtaskerback.domain.Employee;
+import org.iesvdm.pillowtaskerback.domain.Credential;
+import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Room;
-import org.iesvdm.pillowtaskerback.dto.HotelDTO;
-import org.iesvdm.pillowtaskerback.service.EmployeeService;
+import org.iesvdm.pillowtaskerback.service.CredentialService;
 import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.iesvdm.pillowtaskerback.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +23,7 @@ import java.util.List;
 public class HotelController {
 
     @Autowired
-    EmployeeService employeeService;
+    CredentialService credentialService;
 
     @Autowired
     RoomService roomService;
@@ -66,49 +64,49 @@ public class HotelController {
     }
 
     /*--------------------------------------------------*/
-    /*------------------CRUD EMPLOYEES------------------*/
+    /*-----------------CRUD CREDENTIAL------------------*/
     /*--------------------------------------------------*/
 
     // GET ALL
-    @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.all());
+    @GetMapping("/credentials")
+    public ResponseEntity<List<Credential>> getAllCredentials() {
+        return ResponseEntity.ok(credentialService.all());
     }
 
     // GET ALL por Hotel
-    @GetMapping("/{hotelId}/employees")
-    public ResponseEntity<List<Employee>> getEmployeesByHotel(@PathVariable Long hotelId) {
-        return ResponseEntity.ok(employeeService.getEmployeesByHotel(hotelId));
+    @GetMapping("/{hotelId}/credentials")
+    public ResponseEntity<List<CredentialDTO>> getCredentialsDTOByHotel(@PathVariable Long hotelId) {
+        return ResponseEntity.ok(credentialService.getAllCredentialsDTObyHotelId(hotelId));
     }
 
     // GET ONE
-    @GetMapping("/employees/{employeeId}")
-    public ResponseEntity<Employee> getEmployee(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(employeeService.one(employeeId));
+    @GetMapping("/credentials/{credentialId}")
+    public ResponseEntity<Credential> getCredential(@PathVariable Long credentialId) {
+        return ResponseEntity.ok(credentialService.one(credentialId));
     }
 
-    // CREATE con Hotel y User asociado
-    @PostMapping("/{hotelId}/employees/user/{userId}")
-    public ResponseEntity<Employee> createEmployee(
+    // CREATE credential con Hotel y User asociado
+    @PostMapping("/{hotelId}/credentials/user/{userId}")
+    public ResponseEntity<Credential> createCredential(
             @PathVariable Long hotelId,
             @PathVariable Long userId,
-            @RequestBody Employee employee) {
-        Employee createdEmployee = employeeService.createEmployee(hotelId, userId, employee);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
+            @RequestBody Credential credential) {
+        Credential createdCredential = credentialService.createCredential(hotelId, userId, credential);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCredential);
     }
 
     // UPDATE
-    @PutMapping("/employees/{employeeId}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long employeeId, @RequestBody Employee employee) {
-        log.info("Updating employee with id: {}", employeeId);
-        Employee updatedEmployee = employeeService.replace(employeeId, employee);
-        return ResponseEntity.ok(updatedEmployee);
+    @PutMapping("/credentials/{credentialId}")
+    public ResponseEntity<Credential> updateCredential(@PathVariable Long credentialId, @RequestBody Credential credential) {
+        log.info("Updating employee with id: {}", credentialId);
+        Credential updatedCredential = credentialService.replace(credentialId, credential);
+        return ResponseEntity.ok(updatedCredential);
     }
 
     // DELETE
-    @DeleteMapping("/employees/{employeeId}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Long employeeId) {
-        employeeService.delete(employeeId);
+    @DeleteMapping("/credentials/{credentialId}")
+    public ResponseEntity<Void> deleteCredential(@PathVariable Long credentialId) {
+        credentialService.delete(credentialId);
         return ResponseEntity.noContent().build();
     }
 

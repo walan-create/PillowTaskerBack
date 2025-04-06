@@ -3,26 +3,23 @@ package org.iesvdm.pillowtaskerback.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.iesvdm.pillowtaskerback.domain.Employee;
+import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
-import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateEmployee;
+import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
-import org.iesvdm.pillowtaskerback.exception.EmpleadoNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
-import org.iesvdm.pillowtaskerback.repository.EmployeeRepository;
+import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,7 +29,7 @@ public class HotelService {
     HotelRepository hotelRepository;
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    CredentialRepository credentialRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -59,7 +56,7 @@ public class HotelService {
     @Transactional
     public Hotel replace(Long id, Hotel hotelDetails) {
         Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new EmpleadoNotFoundException(id));
+                .orElseThrow(() -> new CredentialNotFoundException(id));
 
         hotel.setName(hotelDetails.getName());
         hotel.setPostalCode(hotelDetails.getPostalCode());
@@ -77,7 +74,7 @@ public class HotelService {
     }
 
     @Transactional
-    public Hotel createHotelForUser(Long userId, HotelDTOAutoCreateEmployee dto) {
+    public Hotel createHotelForUser(Long userId, HotelDTOAutoCreateCredential dto) {
         // Obtenemos el usuario que va a crear el hotel
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsuarioNotFoundException(userId));
@@ -96,30 +93,26 @@ public class HotelService {
 
         /* Autogeneramos el Empleado para el usuario
           que ha creado el hotel y le Asignamos el rol ADMIN*/
-        Employee employee = new Employee();
-        employee.setName(dto.getEmployeeName());
-        employee.setSurname1(dto.getSurname1());
-        employee.setSurname2(dto.getSurname2());
-        employee.setPassword(dto.getPassword());
-        employee.setDni(dto.getDni());
-        employee.setType(TipoEmpleadoEnum.ADMIN);
-        employee.setUser(user);
-        employee.setHotel(hotel);
+        Credential credential = new Credential();
+        credential.setPassword(dto.getPassword());
+        credential.setRol(TipoEmpleadoEnum.ADMIN);
+        credential.setUser(user);
+        credential.setHotel(hotel);
 
         // Guardar el empleado
-        employeeRepository.save(employee);
+        credentialRepository.save(credential);
         return hotel;
     }
 
     //Extras
     @Transactional
-    public List<HotelDTO> getAllHotelsDTOByOwnerIdOrEmployeeId(Long userId) {
+    public List<HotelDTO> getAllHotelsDTOByOwnerIdOrCredentialId(Long userId) {
 
         // Obtener los hoteles cuyo propietario es el `userId`
         Set<Hotel> hotelsByOwner = hotelRepository.findAllByOwner_Id(userId);
 
-        // Obtener los hoteles que tienen un empleado cuyo `user` es el `userId`
-        Set<Hotel> hotelsByEmployee = hotelRepository.findAllByEmployees_User_Id(userId);
+        // Obtener los hoteles que tienen una credencial cuyo `user` es el `userId`
+        Set<Hotel> hotelsByEmployee = hotelRepository.findAllByCredentials_User_Id(userId);
 
         // Combinar ambos hoteles sin repeticiones
         Set<Hotel> allHotels = new HashSet<>(hotelsByOwner);
@@ -132,21 +125,11 @@ public class HotelService {
                         hotel.getName(),
                         hotel.getPostalCode(),
                         hotel.getAddress(),
-                        hotel.getEmployees().size(), //Calculamos el total de los empleados por hotel
+                        hotel.getCredentials().size(), //Calculamos el total de las credenciales por hotel
                         hotel.getOwner().getId() //Asociamos el id del dueño
                 ))
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public void deleteEmployeeFromHotel(Long id, Long hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new HotelNotFoundException(hotelId));
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmpleadoNotFoundException(id));
-        hotel.getEmployees().remove(employee);
-        hotelRepository.save(hotel);
-        employeeRepository.delete(employee);
-    }
 
 }

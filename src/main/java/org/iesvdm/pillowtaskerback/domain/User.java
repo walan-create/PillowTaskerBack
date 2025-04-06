@@ -27,10 +27,6 @@ public class User {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotBlank(message = "El nombre no puede estar vacío")
-    @Column(nullable = false)
-    private String name;
-
     @NotBlank(message = "El correo no puede estar vacío")
     @Email(message = "Debe ser un correo válido") // Valida formato de correo
     @Column(nullable = false, unique = true)
@@ -40,12 +36,20 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Column(nullable = false)
+    private String name;
+
+    private String surname1;
+    private String surname2;
+    private String dni;
+
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Hotel> ownHotels = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Employee> employees = new HashSet<>();
+    private Set<Credential> credentials = new HashSet<>();
 }
 

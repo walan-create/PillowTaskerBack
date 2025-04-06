@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
-import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateEmployee;
+import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.iesvdm.pillowtaskerback.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public class UserController {
     @PostMapping("/{userId}/hotels")
     public ResponseEntity<Hotel> createHotelForUser(
             @PathVariable Long userId,
-            @RequestBody HotelDTOAutoCreateEmployee dto) {
+            @RequestBody HotelDTOAutoCreateCredential dto) {
 
         Hotel createdHotel = hotelService.createHotelForUser(userId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdHotel);
@@ -72,7 +72,7 @@ public class UserController {
     // GET todos los hoteles a los que pertenece un usuario (ya sea como Owner o Employee)
     @GetMapping("/{userId}/hotels")
     public ResponseEntity<List<HotelDTO>> getAllHotelsByUserId(@PathVariable Long userId) {
-        List<HotelDTO> hotelDTOs = hotelService.getAllHotelsDTOByOwnerIdOrEmployeeId(userId);
+        List<HotelDTO> hotelDTOs = hotelService.getAllHotelsDTOByOwnerIdOrCredentialId(userId);
         return ResponseEntity.ok(hotelDTOs);
     }
 }

@@ -3,14 +3,11 @@ package org.iesvdm.pillowtaskerback.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Room;
-import org.iesvdm.pillowtaskerback.domain.User;
-import org.iesvdm.pillowtaskerback.exception.EmpleadoNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HabitacionNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
-import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +45,7 @@ public class RoomService {
     @Transactional
     public Room replace(Long id, Room roomDetails) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new EmpleadoNotFoundException(id));
+                .orElseThrow(() -> new CredentialNotFoundException(id));
         room.setNumberRoom(roomDetails.getNumberRoom());
         room.setCapacity(roomDetails.getCapacity());
         room.setRoomsNumber(roomDetails.getRoomsNumber());

@@ -1,13 +1,12 @@
 package org.iesvdm.pillowtaskerback;
 
 import jakarta.transaction.Transactional;
-import org.iesvdm.pillowtaskerback.domain.Employee;
 import org.iesvdm.pillowtaskerback.domain.User;
-import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateEmployee;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
-import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
-import org.iesvdm.pillowtaskerback.repository.EmployeeRepository;
+import org.iesvdm.pillowtaskerback.domain.Credential;
+import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.iesvdm.pillowtaskerback.service.HotelService;
@@ -19,11 +18,10 @@ import org.springframework.test.annotation.Commit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest // Carga solo la capa de persistencia y usa una BD en memoria (H2)
-class LoadDBTests
-{
+class LoadDBTests {
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private CredentialRepository credentialRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -44,32 +42,52 @@ class LoadDBTests
         /*--------------------------------------------------*/
 
         User user1 = User.builder()
-                .name("Marta La Jefa")
-                .mail("martitaLaJefa@example.com")
+                .name("Alice")
+                .mail("alice.johnson@example.com")
+                .password("alicePass123")
+                .surname1("Johnson")
+                .surname2("Smith")
+                .dni("12345678A")
                 .build();
         user1 = userRepository.save(user1);
 
         User user2 = User.builder()
-                .name("xX_CarlitosDestroyer_Xx")
-                .mail("carlos2004@example.com")
+                .name("Bob")
+                .mail("bob.smith@example.com")
+                .password("bobPass123")
+                .surname1("Smith")
+                .surname2("Johnson")
+                .dni("87654321B")
                 .build();
         user2 = userRepository.save(user2);
 
         User user3 = User.builder()
-                .name("Ana Lover UwU")
-                .mail("ana7@example.com")
+                .name("Charlie")
+                .mail("charlie.brown@example.com")
+                .password("charliePass123")
+                .surname1("Brown")
+                .surname2("Williams")
+                .dni("11223344C")
                 .build();
         user3 = userRepository.save(user3);
 
         User user4 = User.builder()
-                .name("Luis a secas")
-                .mail("pedrogomez123@example.com")
+                .name("Diana")
+                .mail("diana.prince@example.com")
+                .password("dianaPass123")
+                .surname1("Prince")
+                .surname2("Diana")
+                .dni("22334455D")
                 .build();
         user4 = userRepository.save(user4);
 
         User user5 = User.builder()
-                .name("Pablo Random")
-                .mail("martinex@example.com")
+                .name("Eve")
+                .mail("eve.adams@example.com")
+                .password("evePass123")
+                .surname1("Adams")
+                .surname2("Eve")
+                .dni("33445566E")
                 .build();
         user5 = userRepository.save(user5);
 
@@ -77,60 +95,47 @@ class LoadDBTests
         /*-------------------CEATE HOTELS-------------------*/
         /*--------------------------------------------------*/
 
-        // Crear un hotel con el primer usuario (Marta)
-        HotelDTOAutoCreateEmployee hotelDTO = HotelDTOAutoCreateEmployee.builder()
-                .name("Hotel Paradise")
-                .address("Calle loh Cordoneh, Cadih")
-                .postalCode("29645")
-                .employeeName("Marta")
-                .surname1("Ramírez")
-                .surname2("Castro")
-                .dni("12345678A")
+        // Crear un hotel con el primer usuario (Alice)
+        HotelDTOAutoCreateCredential hotelDTO = HotelDTOAutoCreateCredential.builder()
+                .name("Sunshine Hotel")
+                .address("123 Sunshine St, Miami")
+                .postalCode("33101")
+                .password("hotelPass123")
                 .build();
-        // Crear un hotel con el primer usuario (Marta) y autogeneramos un empleado con rol ADMIN
-        Hotel hotel = hotelService.createHotelForUser(user1.getId(),hotelDTO);
+        // Crear un hotel con el primer usuario (Alice) y autogeneramos una credencial con rol ADMIN
+        Hotel hotel = hotelService.createHotelForUser(user1.getId(), hotelDTO);
 
         /*--------------------------------------------------*/
-        /*------------------CEATE EMPLOYEES-----------------*/
+        /*------------------CEATE CREDENTIALS---------------*/
         /*--------------------------------------------------*/
 
-//        Employee employee2 = Employee.builder()
-//                .name("Ana")
-//                .surname1("López")
-//                .surname2("Martínez")
-//                .password("securePass456")
-//                .type(TipoEmpleadoEnum.CLEANER)
-//                .user(user3) // Asignamos el user3 como empleado
-//                .hotel(hotel)
-//                .build();
-//        employee2 = employeeRepository.save(employee2);
-//
-//        Employee employee3 = Employee.builder()
-//                .name("Pedro")
-//                .surname1("Gómez")
-//                .surname2("Pérez")
-//                .password("pedroPass789")
-//                .type(TipoEmpleadoEnum.ADMIN)
-//                .user(user4) // Asignamos el user4 como empleado
-//                .hotel(hotel)
-//                .build();
-//        employee3 = employeeRepository.save(employee3);
-//
-//        Employee employee4 = Employee.builder()
-//                .name("Luis")
-//                .surname1("Martínez")
-//                .surname2("Rodríguez")
-//                .password("luisPass321")
-//                .type(TipoEmpleadoEnum.RECEPTIONIST)
-//                .user(user5) // Asignamos el user5 como empleado
-//                .hotel(hotel)
-//                .build();
-//        employee4 = employeeRepository.save(employee4);
-//
-//        // Verificar que se han guardado correctamente
-//        assertThat(userRepository.count()).isEqualTo(6); // 6 usuarios
-//        assertThat(employeeRepository.count()).isEqualTo(6); // 6 empleados (1 por usuario)
-//        assertThat(hotelRepository.count()).isEqualTo(1); // 1 hotel
+        Credential credential2 = Credential.builder()
+                .password("cleanerPass456")
+                .rol(TipoEmpleadoEnum.CLEANER)
+                .user(user3) // Asignamos el user3 como credencial
+                .hotel(hotel)
+                .build();
+        credential2 = credentialRepository.save(credential2);
+
+        Credential credential3 = Credential.builder()
+                .password("adminPass789")
+                .rol(TipoEmpleadoEnum.ADMIN)
+                .user(user4) // Asignamos el user4 como credencial
+                .hotel(hotel)
+                .build();
+        credential3 = credentialRepository.save(credential3);
+
+        Credential credential4 = Credential.builder()
+                .password("receptionistPass321")
+                .rol(TipoEmpleadoEnum.RECEPTIONIST)
+                .user(user5) // Asignamos el user5 como credencial
+                .hotel(hotel)
+                .build();
+        credential4 = credentialRepository.save(credential4);
+
+        // Verificar que se han guardado correctamente
+        assertThat(userRepository.count()).isEqualTo(5); // 5 usuarios
+        assertThat(credentialRepository.count()).isEqualTo(4); // 4 credenciales (1 por usuario)
+        assertThat(hotelRepository.count()).isEqualTo(1); // 1 hotel
     }
-
 }

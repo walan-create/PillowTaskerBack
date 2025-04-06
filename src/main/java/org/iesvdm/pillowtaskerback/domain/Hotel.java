@@ -34,11 +34,15 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Employee> employees = new HashSet<>();
+    private Set<Credential> credentials = new HashSet<>();
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Room> rooms = new HashSet<>();
+
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Client> clients = new HashSet<>();
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

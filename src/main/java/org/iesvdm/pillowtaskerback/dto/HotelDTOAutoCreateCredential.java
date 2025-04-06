@@ -8,17 +8,12 @@ import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
 @Data
 @AllArgsConstructor
 @Builder
-public class HotelDTOAutoCreateEmployee {
+public class HotelDTOAutoCreateCredential {
     //Datos del hotel
     private String name;
     private String postalCode;
     private String address;
 
-    //Datos del employee AUTOGENERADO
-    private String employeeName;
-    private String surname1;
-    private String surname2;
-    private String dni;
+    //Datos de la credencial AUTOGENERADA
     private String password;
-    private TipoEmpleadoEnum type;
 }

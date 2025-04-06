@@ -26,7 +26,7 @@ public class Incidence {
 
     @ManyToOne
     @ToString.Exclude
-    private Employee employee;
+    private Credential credential;
 
 
 }

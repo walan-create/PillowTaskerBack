@@ -1,10 +1,10 @@
 package org.iesvdm.pillowtaskerback;
 
-import org.iesvdm.pillowtaskerback.domain.Employee;
+import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
-import org.iesvdm.pillowtaskerback.repository.EmployeeRepository;
+import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ public class HotelAdvancedTests {
     private HotelRepository hotelRepository;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private CredentialRepository credentialRepository;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -69,6 +69,7 @@ public class HotelAdvancedTests {
         assertEquals("Juan Pérez", hotel.getOwner().getName());
         assertEquals("juan.perez@ejemplo.com", hotel.getOwner().getMail());
     }
+
     @Test
     @Transactional
     public void testCreateMultipleHotelsAndAssignUsers() {
@@ -113,10 +114,11 @@ public class HotelAdvancedTests {
         assertEquals(user3.getId(), hotel2.getOwner().getId());
         assertEquals("Carlos López", hotel2.getOwner().getName());
     }
+
     @Test
     @Transactional
     @Commit
-    public void testCreateHotelAndAssignUserAndEmployees() {
+    public void testCreateHotelAndAssignUserAndCredentials() {
 
         // Creamos y guardamos user dueño de hotel
         User user = new User();
@@ -125,7 +127,7 @@ public class HotelAdvancedTests {
         user.setPassword("password321");
         user = userRepository.save(user);
 
-        //Creamos y guardamos user para employee
+        //Creamos y guardamos user para credential
         User user2 = new User();
         user2.setName("xX_Carlitos2000_Xx");
         user2.setMail("elCarlos@gmail.com");
@@ -140,19 +142,16 @@ public class HotelAdvancedTests {
         hotel.setOwner(user);
         hotelRepository.save(hotel);
 
-        //Creamos y guardamos employee asignando user
-        Employee employee = new Employee();
-        employee.setName("Carlos");
-        employee.setSurname1("Gomez");
-        employee.setSurname2("Grijalba");
-        employee.setPassword("ContraHotelCarlos123");
-        employee.setType(TipoEmpleadoEnum.RECEPTIONIST);
-        employee.setUser(user2);
-        employee.setHotel(hotel);
-        employeeRepository.save(employee);
+        //Creamos y guardamos credential asignando user
+        Credential credential = new Credential();
+        credential.setPassword("ContraHotelCarlos123");
+        credential.setRol(TipoEmpleadoEnum.RECEPTIONIST);
+        credential.setUser(user2);
+        credential.setHotel(hotel);
+        credentialRepository.save(credential);
 
-        //Volvemos a guardar Hotel con el employee
-        hotel.getEmployees().add(employee);
+        //Volvemos a guardar Hotel con la credential
+        hotel.getCredentials().add(credential);
         hotelRepository.save(hotel);
 
         // Verificar que el hotel se ha creado correctamente
@@ -162,14 +161,9 @@ public class HotelAdvancedTests {
         assertEquals(user.getId(), hotel.getOwner().getId());
         assertEquals("Ana", hotel.getOwner().getName());
 
-        // Verificar que el hotel tiene al employee Carlos
-        assertTrue(hotel.getEmployees().contains(employee));
-        assertTrue(hotel.getEmployees().stream()
-                .anyMatch(e -> "Carlos".equals(e.getName())));
+        // Verificar que el hotel tiene la credential de Carlos
+        assertTrue(hotel.getCredentials().contains(credential));
+        assertTrue(hotel.getCredentials().stream()
+                .anyMatch(c -> "xX_Carlitos2000_Xx".equals(c.getUser().getName())));
     }
-
 }
-
-
-
-
