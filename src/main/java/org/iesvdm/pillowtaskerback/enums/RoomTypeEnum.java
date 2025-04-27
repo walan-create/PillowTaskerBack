@@ -1,6 +1,6 @@
 package org.iesvdm.pillowtaskerback.enums;
 
-public enum TipoHabitacionEnum {
+public enum RoomTypeEnum {
     SUITE,
     ADAPTABLE,
     STANDAR

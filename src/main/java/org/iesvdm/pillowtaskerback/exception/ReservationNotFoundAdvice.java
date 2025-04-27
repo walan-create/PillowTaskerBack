@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class ReservaNotFoundAdvice {
+public class ReservationNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(ReservaNotFoundException.class)
+    @ExceptionHandler(ReservationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String reservaNotFoundHandler(ReservaNotFoundException categoriaNotFoundException) {
-        return categoriaNotFoundException.getMessage();
+    public String reservaNotFoundHandler(ReservationNotFoundException reservationNotFoundException) {
+        return reservationNotFoundException.getMessage();
     }
 }

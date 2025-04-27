@@ -2,6 +2,7 @@ package org.iesvdm.pillowtaskerback.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.Reservation;
+import org.iesvdm.pillowtaskerback.dto.ReservationDTO;
 import org.iesvdm.pillowtaskerback.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -39,9 +40,9 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
-    public Reservation replaceReserva(@PathVariable("id") Long id, @RequestBody Reservation reservation) {
-        log.info("Actualizar reservation con id = " + id + "\n reservation" + reservation);
-        return this.reservationService.replace(id, reservation);
+    public Reservation replaceReserva(@PathVariable("id") Long id, @RequestBody ReservationDTO reservationDTO) {
+        log.info("Actualizar reservation con id = " + id + "\n reservation" + reservationDTO);
+        return this.reservationService.replace(id, reservationDTO);
     }
 
     @ResponseBody

@@ -8,7 +8,7 @@ import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
 import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
@@ -95,7 +95,7 @@ public class HotelService {
           que ha creado el hotel y le Asignamos el rol ADMIN*/
         Credential credential = new Credential();
         credential.setPassword(dto.getPassword());
-        credential.setRol(TipoEmpleadoEnum.ADMIN);
+        credential.setRol(CredentialTypeEnum.ADMIN);
         credential.setUser(user);
         credential.setHotel(hotel);
 

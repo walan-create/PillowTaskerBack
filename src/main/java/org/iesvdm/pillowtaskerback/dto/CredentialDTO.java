@@ -1,8 +1,7 @@
 package org.iesvdm.pillowtaskerback.dto;
 
-import jakarta.persistence.*;
 import lombok.*;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 
 @Data
 @AllArgsConstructor
@@ -10,7 +9,7 @@ public class CredentialDTO {
 
     // Info de la credencial
     private Long CredentialId;
-    private TipoEmpleadoEnum rol;
+    private CredentialTypeEnum rol;
     private String credentialPassword;
 
     // Info del usuario

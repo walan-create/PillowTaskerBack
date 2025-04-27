@@ -2,7 +2,7 @@ package org.iesvdm.pillowtaskerback.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.iesvdm.pillowtaskerback.enums.EstadoInvitacionEnum;
+import org.iesvdm.pillowtaskerback.enums.InvitationStateEnum;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +21,7 @@ public class Invitation {
     @Column(nullable = false)
     private String mail;
 
-    private EstadoInvitacionEnum state;
+    private InvitationStateEnum state;
     private LocalDateTime shippingDate;
 
     @ManyToOne

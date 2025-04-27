@@ -1,5 +1,6 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,6 @@ public class Client {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(unique = true)
     private String nif;
 
     private String name;
@@ -31,10 +31,12 @@ public class Client {
     private String phoneNumber;
 
     @ManyToMany
+    @JsonIgnore
     private Set<Reservation> reservations;
 
     @ManyToOne
     @ToString.Exclude
+    @JsonIgnore
     private Hotel hotel;
 
 }

@@ -1,6 +1,6 @@
 package org.iesvdm.pillowtaskerback.enums;
 
-public enum TipoEmpleadoEnum {
+public enum CredentialTypeEnum {
 
     RECEPTIONIST,
     CLEANER,

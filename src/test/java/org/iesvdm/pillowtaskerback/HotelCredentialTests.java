@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
@@ -61,7 +61,7 @@ public class HotelCredentialTests {
         // Crear una credencial y asignarle un user y un hotel
         Credential credential = new Credential();
         credential.setPassword("password123");
-        credential.setRol(TipoEmpleadoEnum.RECEPTIONIST);  // Asignar un tipo de credencial
+        credential.setRol(CredentialTypeEnum.RECEPTIONIST);  // Asignar un tipo de credencial
         credential.setUser(user);  // Asignar el user a esta credencial
         credential.setHotel(hotel);  // Asignar el hotel a esta credencial
 
@@ -70,7 +70,7 @@ public class HotelCredentialTests {
 
         // Verificar que la credencial se ha guardado correctamente
         assertNotNull(credential.getId());
-        assertEquals(TipoEmpleadoEnum.RECEPTIONIST, credential.getRol());
+        assertEquals(CredentialTypeEnum.RECEPTIONIST, credential.getRol());
         assertEquals(user.getId(), credential.getUser().getId());
         assertEquals(hotel.getId(), credential.getHotel().getId());
     }
@@ -81,7 +81,7 @@ public class HotelCredentialTests {
         // Crear una credencial
         Credential credential = new Credential();
         credential.setPassword("password123");
-        credential.setRol(TipoEmpleadoEnum.RECEPTIONIST);
+        credential.setRol(CredentialTypeEnum.RECEPTIONIST);
         credential.setUser(user);
         credential.setHotel(hotel);
 
@@ -104,7 +104,7 @@ public class HotelCredentialTests {
         // Crear una credencial
         Credential credential = new Credential();
         credential.setPassword("password123");
-        credential.setRol(TipoEmpleadoEnum.ADMIN);
+        credential.setRol(CredentialTypeEnum.ADMIN);
         credential.setUser(user);
         credential.setHotel(hotel);
 
@@ -116,13 +116,13 @@ public class HotelCredentialTests {
 
         // Actualizar los datos de la credencial
         credential.setPassword("newpassword123");
-        credential.setRol(TipoEmpleadoEnum.ADMIN);
+        credential.setRol(CredentialTypeEnum.ADMIN);
 
         // Guardar los cambios
         credential = credentialRepository.save(credential);
 
         // Verificar que los cambios se han guardado correctamente
         assertEquals("newpassword123", credential.getPassword());
-        assertEquals(TipoEmpleadoEnum.ADMIN, credential.getRol());
+        assertEquals(CredentialTypeEnum.ADMIN, credential.getRol());
     }
 }

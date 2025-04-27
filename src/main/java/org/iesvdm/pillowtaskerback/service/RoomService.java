@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Room;
+import org.iesvdm.pillowtaskerback.enums.RoomStateEnum;
 import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HabitacionNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
@@ -23,10 +24,11 @@ public class RoomService {
     @Autowired
     HotelService hotelService;
 
-    @PersistenceContext
-    EntityManager entityManager;
     @Autowired
     private HotelRepository hotelRepository;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     public List<Room> all(){return this.roomRepository.findAll();}
 
@@ -45,7 +47,7 @@ public class RoomService {
     @Transactional
     public Room replace(Long id, Room roomDetails) {
         Room room = roomRepository.findById(id)
-                .orElseThrow(() -> new CredentialNotFoundException(id));
+                .orElseThrow(() -> new HabitacionNotFoundException(id));
         room.setNumberRoom(roomDetails.getNumberRoom());
         room.setCapacity(roomDetails.getCapacity());
         room.setRoomsNumber(roomDetails.getRoomsNumber());
@@ -70,14 +72,24 @@ public class RoomService {
         return this.roomRepository.findAllByHotel_id(hotelId);
     }
 
-    public Room createRoom(Long hotelId, Room room) {
+    public Room createRoomForHotel(Long hotelId, Room room) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new HotelNotFoundException(hotelId));
 
+        // Verificar si ya existe una habitación con el mismo número en ese hotel
+        boolean roomExists = hotel.getRooms().stream()
+                .anyMatch(r -> r.getNumberRoom().equalsIgnoreCase(room.getNumberRoom()));
+
+        if (roomExists) {
+            throw new IllegalArgumentException("Ya existe una habitación con ese número en este hotel.");
+        }
+        // Asociar habitación con el hotel
         room.setHotel(hotel);
         hotel.getRooms().add(room);
+
         return roomRepository.save(room);
     }
+
 
 
 }

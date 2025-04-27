@@ -3,7 +3,7 @@ package org.iesvdm.pillowtaskerback;
 import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
@@ -145,7 +145,7 @@ public class HotelAdvancedTests {
         //Creamos y guardamos credential asignando user
         Credential credential = new Credential();
         credential.setPassword("ContraHotelCarlos123");
-        credential.setRol(TipoEmpleadoEnum.RECEPTIONIST);
+        credential.setRol(CredentialTypeEnum.RECEPTIONIST);
         credential.setUser(user2);
         credential.setHotel(hotel);
         credentialRepository.save(credential);

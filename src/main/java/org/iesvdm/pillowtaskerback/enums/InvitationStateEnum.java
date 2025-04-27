@@ -1,6 +1,6 @@
 package org.iesvdm.pillowtaskerback.enums;
 
-public enum EstadoInvitacionEnum {
+public enum InvitationStateEnum {
     ACCEPTED,
     REJECTED,
     PENDING

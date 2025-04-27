@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class Credential {
     @EqualsAndHashCode.Include
     private Long id;
 
-    private TipoEmpleadoEnum rol;
+    private CredentialTypeEnum rol;
 
     @NotBlank(message = "La contraseña no puede estar vacía")
     @Column(nullable = false)
@@ -44,7 +44,7 @@ public class Credential {
     private Hotel hotel;
 
     @OneToMany(mappedBy = "credential", fetch = FetchType.EAGER)
-    Set<Incidence> incidences = new HashSet<>();
+    Set<Incident> incidents = new HashSet<>();
 
 
 }

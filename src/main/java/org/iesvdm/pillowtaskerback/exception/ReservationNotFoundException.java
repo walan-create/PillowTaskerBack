@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ClienteNotFoundException extends RuntimeException {
-  public ClienteNotFoundException(Long id) {
-    super("Not found Client with id: " + id);
-  }
+public class ReservationNotFoundException extends RuntimeException {
+    public ReservationNotFoundException(Long id) {
+        super("Not found Reservation with id: " + id);
+    }
 }

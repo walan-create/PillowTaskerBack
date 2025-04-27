@@ -11,7 +11,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("v1/api/clientes")
+@RequestMapping("v1/api/clients")
 @Controller
 public class ClientController {
     private final ClientService clientService;
@@ -50,6 +50,7 @@ public class ClientController {
     public void deleteCliente(@PathVariable ("id") Long id) {
         this.clientService.delete(id);
     }
+
 
 }
 

@@ -5,7 +5,7 @@ import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Credential;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
@@ -111,7 +111,7 @@ class LoadDBTests {
 
         Credential credential2 = Credential.builder()
                 .password("cleanerPass456")
-                .rol(TipoEmpleadoEnum.CLEANER)
+                .rol(CredentialTypeEnum.CLEANER)
                 .user(user3) // Asignamos el user3 como credencial
                 .hotel(hotel)
                 .build();
@@ -119,7 +119,7 @@ class LoadDBTests {
 
         Credential credential3 = Credential.builder()
                 .password("adminPass789")
-                .rol(TipoEmpleadoEnum.ADMIN)
+                .rol(CredentialTypeEnum.ADMIN)
                 .user(user4) // Asignamos el user4 como credencial
                 .hotel(hotel)
                 .build();
@@ -127,7 +127,7 @@ class LoadDBTests {
 
         Credential credential4 = Credential.builder()
                 .password("receptionistPass321")
-                .rol(TipoEmpleadoEnum.RECEPTIONIST)
+                .rol(CredentialTypeEnum.RECEPTIONIST)
                 .user(user5) // Asignamos el user5 como credencial
                 .hotel(hotel)
                 .build();

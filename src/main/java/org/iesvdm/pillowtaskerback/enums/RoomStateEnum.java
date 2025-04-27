@@ -1,6 +1,6 @@
 package org.iesvdm.pillowtaskerback.enums;
 
-public enum EstadoHabitacionEnum {
+public enum RoomStateEnum {
     FREE,
     OCCUPIED,
     CLEAN,

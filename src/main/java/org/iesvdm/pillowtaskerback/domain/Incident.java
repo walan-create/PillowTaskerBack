@@ -1,5 +1,6 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Incidence {
+public class Incident {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -22,10 +23,12 @@ public class Incidence {
 
     @ManyToOne
     @ToString.Exclude
+    @JsonIgnore
     private Hotel hotel;
 
     @ManyToOne
     @ToString.Exclude
+    @JsonIgnore
     private Credential credential;
 
 

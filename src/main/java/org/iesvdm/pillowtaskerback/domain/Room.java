@@ -1,11 +1,13 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.iesvdm.pillowtaskerback.enums.EstadoHabitacionEnum;
-import org.iesvdm.pillowtaskerback.enums.TipoHabitacionEnum;
+import org.iesvdm.pillowtaskerback.enums.RoomStateEnum;
+import org.iesvdm.pillowtaskerback.enums.RoomTypeEnum;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +17,10 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Room {
 
     @Id
@@ -31,16 +37,16 @@ public class Room {
     @NotNull
     private boolean kitchen;
     @NotNull
-    private TipoHabitacionEnum type;
+    private RoomTypeEnum type;
     @NotNull
-    private EstadoHabitacionEnum state;
+    private RoomStateEnum state;
 
     @ManyToOne
     @ToString.Exclude
     @JsonIgnore
     private Hotel hotel;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "rooms")
     @JsonIgnore
     private Set<Reservation> reservations = new HashSet<>();
 

@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class ClienteNotFoundAdvice {
+public class DuplicateClientNifAdvice {
     @ResponseBody
     @ExceptionHandler(ClienteNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String clienteNotFoundHandler(ClienteNotFoundException clienteNotFoundException) {
-        return clienteNotFoundException.getMessage();
+    public String clientNotFoundHandler(ClienteNotFoundException categoriaNotFoundException) {
+        return categoriaNotFoundException.getMessage();
     }
 }

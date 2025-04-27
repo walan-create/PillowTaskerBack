@@ -3,7 +3,6 @@ package org.iesvdm.pillowtaskerback.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.iesvdm.pillowtaskerback.enums.TipoEmpleadoEnum;
 
 @Data
 @AllArgsConstructor

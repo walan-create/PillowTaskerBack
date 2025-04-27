@@ -7,7 +7,6 @@ import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
-import org.iesvdm.pillowtaskerback.dto.HotelDTO;
 import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,7 +56,7 @@ public class CredentialService {
 
         credential.setRol(credentialDetails.getRol());
         credential.setPassword(credentialDetails.getPassword());
-        credential.setIncidences(credentialDetails.getIncidences());
+        credential.setIncidents(credentialDetails.getIncidents());
 
         return credentialRepository.save(credential);
     }

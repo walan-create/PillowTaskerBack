@@ -1,8 +1,12 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.iesvdm.pillowtaskerback.enums.EstadoReservaEnum;
+import org.iesvdm.pillowtaskerback.enums.ReservationStateEnum;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -13,6 +17,10 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Reservation {
 
     @Id
@@ -20,17 +28,27 @@ public class Reservation {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NotNull
     private String reservationsName;
-    private LocalDateTime entryDate;
-    private LocalDateTime departureDay;
-    private EstadoReservaEnum state;
+    @NotNull
+    private LocalDateTime entryDate; // Formato ISO 8601
+    @NotNull
+    private LocalDateTime departureDay; // Formato ISO 8601
+    @NotNull
+    private ReservationStateEnum state;
+    @NotNull
     private boolean earlyDeparture;
 
-    @ManyToMany(mappedBy = "reservations")
+    @ManyToMany
+    @JoinTable(
+            name = "reservation_room",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
     private Set<Room> rooms = new HashSet<>();
 
     @ManyToMany(mappedBy = "reservations")
-    private Set<Client> occupants;
+    private Set<Client> occupants = new HashSet<>();
 
     @OneToOne
     private Reservation previousReservation;
