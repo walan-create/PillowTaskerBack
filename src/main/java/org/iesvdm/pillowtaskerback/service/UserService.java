@@ -6,10 +6,13 @@ import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
+import org.iesvdm.pillowtaskerback.security.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -18,10 +21,13 @@ public class UserService {
     @PersistenceContext
     EntityManager entityManager;
 
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public List<User> all(){return this.userRepository.findAll();}
 
     @Transactional
     public User save (User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         entityManager.refresh(user);
         return user;
@@ -50,5 +56,25 @@ public class UserService {
                     this.userRepository.delete(h);
                     return h; })
                 .orElseThrow(()-> new UsuarioNotFoundException(id));
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByMail(email);
+    }
+
+    public User register(RegisterRequest req) {
+        User user = User.builder()
+                .mail(req.getMail())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .name(req.getName())
+                .surname1(req.getSurname1())
+                .surname2(req.getSurname2())
+                .dni(req.getDni())
+                .build();
+        return userRepository.save(user);
+    }
+
+    public boolean checkPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
     }
 }
