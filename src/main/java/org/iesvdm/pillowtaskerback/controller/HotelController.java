@@ -34,6 +34,10 @@ public class HotelController {
     @Autowired
     ReservationService reservationService;
 
+    @Autowired
+    InvitationService invitationService;
+
+
     private final HotelService hotelService;
 
     public HotelController(HotelService hotelService){
@@ -70,6 +74,36 @@ public class HotelController {
     }
 
     /*--------------------------------------------------*/
+    /*----------------CRUD INVITATIONS------------------*/
+    /*--------------------------------------------------*/
+
+    // ENVIAR INVITACION
+    @PostMapping("/{hotelId}/invitations")
+    public ResponseEntity<Invitation> sendInvitation(@PathVariable Long hotelId, @RequestBody Invitation invitation) {
+        Invitation createdInvitation = invitationService.sendInvitation(hotelId, invitation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdInvitation);
+    }
+
+    // ACEPTAR O NEGAR INVITACIÓN
+    @PatchMapping("/{hotelId}/invitations/{invitationId}/respond")
+    public ResponseEntity<Void> respondToInvitation(
+            @PathVariable Long hotelId,
+            @PathVariable Long invitationId,
+            @RequestParam boolean accepted,
+            @RequestParam String password) {
+
+        boolean processed = invitationService.processInvitationResponse(hotelId, invitationId, accepted, password);
+
+        // Si se procesó correctamente, devolvemos OK
+        if (processed) {
+            return ResponseEntity.ok().build(); // Código 200 OK
+        } else {
+            // Si no se encontró la invitación o no es válida, devolvemos NOT FOUND
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Código 404 NOT FOUND
+        }
+    }
+
+    /*--------------------------------------------------*/
     /*-----------------CRUD CREDENTIAL------------------*/
     /*--------------------------------------------------*/
 
@@ -94,7 +128,6 @@ public class HotelController {
         Credential createdCredential = credentialService.createCredential(hotelId, userId, credential);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCredential);
     }
-
     // UPDATE by hotel
     @PutMapping("/{hotelId}/credentials/{credentialId}")
     public ResponseEntity<Credential> updateCredential(@PathVariable Long credentialId, @RequestBody Credential credential) {
@@ -187,7 +220,7 @@ public class HotelController {
     }
 
     /*--------------------------------------------------*/
-    /*------------------CRUD CLIENTS--------------------*/
+    /*----------------CRUD INCIDENTS--------------------*/
     /*--------------------------------------------------*/
 
     // GET ALL por Hotel
@@ -268,7 +301,7 @@ public class HotelController {
         return ResponseEntity.ok(updatedReservation);
     }
 
-    //Check-In
+    // CHECK-IN
     @PatchMapping("/{hotelId}/reservations/{reservationId}/checkin")
     public ResponseEntity<Reservation> checkInReservation(
             @PathVariable Long hotelId,
@@ -279,7 +312,7 @@ public class HotelController {
         return ResponseEntity.ok(updatedReservation);
     }
 
-    //Check-Out
+    // CHECK-IN
     @PatchMapping("/{hotelId}/reservations/{reservationId}/checkout")
     public ResponseEntity<Reservation> checkOutReservation(
             @PathVariable Long hotelId,

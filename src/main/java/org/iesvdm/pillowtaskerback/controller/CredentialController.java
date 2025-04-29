@@ -19,7 +19,6 @@ public class CredentialController {
     @Autowired
     CredentialService credentialService;
 
-
     // GET ALL
     @GetMapping
     public ResponseEntity<List<Credential>> getAllCredentials() {

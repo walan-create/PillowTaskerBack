@@ -2,6 +2,7 @@ package org.iesvdm.pillowtaskerback.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.enums.InvitationStateEnum;
 
 import java.time.LocalDateTime;
@@ -27,5 +28,9 @@ public class Invitation {
     @ManyToOne
     @ToString.Exclude
     private Hotel hotel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CredentialTypeEnum credentialType;
 
 }

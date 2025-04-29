@@ -3,10 +3,12 @@ package org.iesvdm.pillowtaskerback.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
+import org.iesvdm.pillowtaskerback.domain.Invitation;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
 import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.service.HotelService;
+import org.iesvdm.pillowtaskerback.service.InvitationService;
 import org.iesvdm.pillowtaskerback.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,11 +27,15 @@ public class UserController {
     @Autowired
     private final HotelService hotelService;
 
+    @Autowired
+    InvitationService invitationService;
+
     // GET ALL
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.all());
     }
+
     // GET ONE
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
@@ -75,4 +81,29 @@ public class UserController {
         List<HotelDTO> hotelDTOs = hotelService.getAllHotelsDTOByOwnerIdOrCredentialId(userId);
         return ResponseEntity.ok(hotelDTOs);
     }
+
+    /*--------------------------------------------------*/
+    /*-----------CRUD PARCIAL INVITATIONS---------------*/
+    /*--------------------------------------------------*/
+
+    // Método GET para obtener todas las invitaciones de un correo electrónico
+    @GetMapping("/invitations/email/{email}")
+    public ResponseEntity<List<Invitation>> getInvitationsByEmail(@PathVariable String email) {
+        List<Invitation> invitations = invitationService.getInvitationsByEmail(email);
+        if (invitations.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(invitations);
+    }
+
+    @DeleteMapping("/invitations/{invitationId}")
+    public ResponseEntity<Void> deleteInvitationById(@PathVariable Long invitationId) {
+        try {
+            invitationService.deleteInvitationById(invitationId);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
+        }
+    }
+
 }
