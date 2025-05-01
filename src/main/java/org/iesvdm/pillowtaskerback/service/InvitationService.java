@@ -5,11 +5,9 @@ import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Invitation;
 import org.iesvdm.pillowtaskerback.domain.User;
-import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.enums.InvitationStateEnum;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioByMailNotFoundException;
-import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.InvitationRepository;
@@ -37,7 +35,7 @@ public class InvitationService {
 
 
     // Método para obtener todas las invitaciones de un correo electrónico
-    public List<Invitation> getInvitationsByEmail(String email) {
+    public List<Invitation> getInvitationsByMail(String email) {
         return invitationRepository.findByMail(email);
     }
 
@@ -73,27 +71,22 @@ public class InvitationService {
     /**
      * Procesar la respuesta de una invitación (aceptada o rechazada).
      *
-     * @param hotelId ID del hotel al que pertenece la invitación.
      * @param invitationId ID de la invitación a procesar.
      * @param accepted Indica si la invitación fue aceptada o rechazada.
      * @param password Contraseña para la credencial.
      * @return `true` si la operación fue exitosa, `false` si no.
      */
-    public boolean processInvitationResponse(Long hotelId, Long invitationId, boolean accepted, String password) {
+    public boolean processInvitationResponse(Long invitationId, boolean accepted, String password) {
         // Buscar la invitación por ID
         Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new RuntimeException("Invitación no encontrada"));
-
-        // Verificar que la invitación pertenece al hotel
-        if (!invitation.getHotel().getId().equals(hotelId)) {
-            return false; // La invitación no pertenece a ese hotel
-        }
+                .orElseThrow(() -> new RuntimeException("Invitación no encontradacon ID:" + invitationId));
 
         if (accepted) {
+            System.out.println("Aceptada");
             // Buscar el usuario por correo (asociado con la invitación)
             User user = userRepository.findByMail(invitation.getMail())
                     .orElseThrow(() -> new UsuarioByMailNotFoundException(invitation.getMail()));
-
+            System.out.println("Usuario encontrado: "+user.getName());
             // Crear la credencial
             Credential credential = new Credential();
             credential.setHotel(invitation.getHotel());

@@ -84,24 +84,7 @@ public class HotelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdInvitation);
     }
 
-    // ACEPTAR O NEGAR INVITACIÓN
-    @PatchMapping("/{hotelId}/invitations/{invitationId}/respond")
-    public ResponseEntity<Void> respondToInvitation(
-            @PathVariable Long hotelId,
-            @PathVariable Long invitationId,
-            @RequestParam boolean accepted,
-            @RequestParam String password) {
 
-        boolean processed = invitationService.processInvitationResponse(hotelId, invitationId, accepted, password);
-
-        // Si se procesó correctamente, devolvemos OK
-        if (processed) {
-            return ResponseEntity.ok().build(); // Código 200 OK
-        } else {
-            // Si no se encontró la invitación o no es válida, devolvemos NOT FOUND
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Código 404 NOT FOUND
-        }
-    }
 
     /*--------------------------------------------------*/
     /*-----------------CRUD CREDENTIAL------------------*/

@@ -62,7 +62,28 @@ public class UserService {
         return userRepository.findByMail(email);
     }
 
+    public User login(String email, String rawPassword) {
+        User user = userRepository.findByMail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        if (!checkPassword(user, rawPassword)) {
+            throw new IllegalArgumentException("Contraseña incorrecta");
+        }
+
+        return user;
+    }
+
     public User register(RegisterRequest req) {
+        // Verifica si el correo ya está en uso
+        if (userRepository.findByMail(req.getMail()).isPresent()) {
+            throw new IllegalArgumentException("El correo ya está en uso");
+        }
+
+        // Verifica si el DNI ya está en uso
+        if (userRepository.findByDni(req.getDni()).isPresent()) {
+            throw new IllegalArgumentException("El DNI ya está en uso");
+        }
+
         User user = User.builder()
                 .mail(req.getMail())
                 .password(passwordEncoder.encode(req.getPassword()))
@@ -71,8 +92,10 @@ public class UserService {
                 .surname2(req.getSurname2())
                 .dni(req.getDni())
                 .build();
+
         return userRepository.save(user);
     }
+
 
     public boolean checkPassword(User user, String rawPassword) {
         return passwordEncoder.matches(rawPassword, user.getPassword());

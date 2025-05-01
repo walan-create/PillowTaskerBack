@@ -1,5 +1,6 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;

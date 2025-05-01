@@ -8,6 +8,7 @@ import org.iesvdm.pillowtaskerback.security.JwtUtil;
 import org.iesvdm.pillowtaskerback.security.LoginRequest;
 import org.iesvdm.pillowtaskerback.security.RegisterRequest;
 import org.iesvdm.pillowtaskerback.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,53 +23,25 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        System.out.println("Intentando iniciar sesión con mail: " + request.getMail());
-        return userService.findByEmail(request.getMail())
-                .map(user -> {
-                    if (userService.checkPassword(user, request.getPassword())) {
-                        String token = jwtUtil.generateToken(user);
-                        System.out.println("Login exitoso. Generando token...");
-                        return ResponseEntity.ok(new AuthResponse(user, token));
-                    } else {
-                        System.out.println("Contraseña incorrecta");
-                        return ResponseEntity.status(401).build(); // Unauthorized
-                    }
-                })
-                .orElseGet(() -> {
-                    System.out.println("Usuario no encontrado");
-                    return ResponseEntity.status(401).build(); // Unauthorized
-                });
+        try {
+            User user = userService.login(request.getMail(), request.getPassword());
+            String token = jwtUtil.generateToken(user);
+            return ResponseEntity.ok(new AuthResponse(user, token));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(401).body(e.getMessage()); // Unauthorized
+        }
     }
-
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
-        // Verificar si el usuario ya existe por correo
-        if (userService.findByEmail(request.getMail()).isPresent()) {
-            return ResponseEntity.status(409).build(); // Conflict, ya existe un usuario con ese correo
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
+        try {
+            User savedUser = userService.register(request);
+            String token = jwtUtil.generateToken(savedUser);
+            return ResponseEntity.ok(new AuthResponse(savedUser, token));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).body(e.getMessage()); // Conflicto (duplicado)
         }
-
-        // Crear el nuevo usuario a partir del RegisterRequest
-        User newUser = new User();
-        newUser.setMail(request.getMail());
-        newUser.setPassword(request.getPassword());  // Asegúrate de que la contraseña se encripte
-        newUser.setName(request.getName());
-        newUser.setSurname1(request.getSurname1());
-        newUser.setSurname2(request.getSurname2());
-        newUser.setDni(request.getDni());
-
-        // Guardar el usuario en la base de datos
-        User savedUser = userService.save(newUser);
-
-        // Generar el token JWT
-        String token = jwtUtil.generateToken(savedUser);
-
-        // Crear el AuthResponse con el usuario y el token
-        AuthResponse authResponse = new AuthResponse(savedUser, token);
-
-        return ResponseEntity.ok(authResponse);
     }
-
 
     @GetMapping("/check-status")
     public ResponseEntity<?> checkStatus(@RequestHeader(value = "Authorization", required = false) String header) {

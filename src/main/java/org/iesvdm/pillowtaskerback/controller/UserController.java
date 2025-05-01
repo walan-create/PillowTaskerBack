@@ -7,6 +7,7 @@ import org.iesvdm.pillowtaskerback.domain.Invitation;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
 import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
+import org.iesvdm.pillowtaskerback.dto.InvitationResponseDTO;
 import org.iesvdm.pillowtaskerback.service.HotelService;
 import org.iesvdm.pillowtaskerback.service.InvitationService;
 import org.iesvdm.pillowtaskerback.service.UserService;
@@ -86,24 +87,29 @@ public class UserController {
     /*-----------CRUD PARCIAL INVITATIONS---------------*/
     /*--------------------------------------------------*/
 
-    // Método GET para obtener todas las invitaciones de un correo electrónico
-    @GetMapping("/invitations/email/{email}")
-    public ResponseEntity<List<Invitation>> getInvitationsByEmail(@PathVariable String email) {
-        List<Invitation> invitations = invitationService.getInvitationsByEmail(email);
-        if (invitations.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(invitations);
+    // GET para obtener todas las invitaciones de un correo electrónico
+    @GetMapping("/invitations/mail/{mail}")
+    public ResponseEntity<List<Invitation>> getInvitationsByEmail(@PathVariable String mail) {
+        List<Invitation> invitations = invitationService.getInvitationsByMail(mail);
+        return ResponseEntity.ok(invitations); // Siempre devuelve 200 OK con la lista, aunque esté vacía
     }
 
-    @DeleteMapping("/invitations/{invitationId}")
-    public ResponseEntity<Void> deleteInvitationById(@PathVariable Long invitationId) {
-        try {
-            invitationService.deleteInvitationById(invitationId);
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
-        }
+
+    // ACEPTAR O NEGAR INVITACIÓN
+    @PatchMapping("/invitations/{invitationId}/respond")
+    public ResponseEntity<Void> respondToInvitation(
+            @PathVariable Long invitationId,
+            @RequestBody InvitationResponseDTO responseDto) {
+    System.out.println("Entra");
+        boolean processed = invitationService.processInvitationResponse(
+                invitationId,
+                responseDto.isAccepted(),
+                responseDto.getPassword()
+        );
+    System.out.println("Procesed "+processed);
+        return processed
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 }
