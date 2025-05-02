@@ -9,6 +9,7 @@ import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.iesvdm.pillowtaskerback.security.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +19,12 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PersistenceContext
     EntityManager entityManager;
-
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<User> all(){return this.userRepository.findAll();}
 
@@ -95,7 +98,6 @@ public class UserService {
 
         return userRepository.save(user);
     }
-
 
     public boolean checkPassword(User user, String rawPassword) {
         return passwordEncoder.matches(rawPassword, user.getPassword());

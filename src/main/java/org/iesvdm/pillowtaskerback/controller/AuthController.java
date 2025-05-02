@@ -8,7 +8,6 @@ import org.iesvdm.pillowtaskerback.security.JwtUtil;
 import org.iesvdm.pillowtaskerback.security.LoginRequest;
 import org.iesvdm.pillowtaskerback.security.RegisterRequest;
 import org.iesvdm.pillowtaskerback.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +57,7 @@ public class AuthController {
         }
 
         // Extrae el mail del token
-        String email = jwtUtil.extractUsername(token);
+        String email = jwtUtil.extractMail(token);
 
         // Busca el usuario por mail
         return userService.findByEmail(email)

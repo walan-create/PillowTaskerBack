@@ -3,7 +3,10 @@ package org.iesvdm.pillowtaskerback.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.*;
 import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
+import org.iesvdm.pillowtaskerback.dto.HotelAccessDTO;
+import org.iesvdm.pillowtaskerback.dto.HotelCredentialResponseDTO;
 import org.iesvdm.pillowtaskerback.dto.ReservationDTO;
+import org.iesvdm.pillowtaskerback.security.JwtUtil;
 import org.iesvdm.pillowtaskerback.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -37,6 +41,12 @@ public class HotelController {
     @Autowired
     InvitationService invitationService;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    JwtUtil jwtUtil;
+
 
     private final HotelService hotelService;
 
@@ -59,7 +69,7 @@ public class HotelController {
     }
 
     // UPDATE
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Hotel> updateHotel(@PathVariable Long id, @RequestBody Hotel hotel) {
         Hotel updatedHotel = hotelService.replace(id,hotel);
         return updatedHotel != null ? ResponseEntity.ok(updatedHotel) : ResponseEntity.notFound().build();
@@ -83,8 +93,6 @@ public class HotelController {
         Invitation createdInvitation = invitationService.sendInvitation(hotelId, invitation);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdInvitation);
     }
-
-
 
     /*--------------------------------------------------*/
     /*-----------------CRUD CREDENTIAL------------------*/
@@ -124,6 +132,23 @@ public class HotelController {
     public ResponseEntity<Void> deleteCredential(@PathVariable Long credentialId) {
         credentialService.delete(credentialId);
         return ResponseEntity.noContent().build();
+    }
+
+    // VALIDATE CREDENTIAL
+    @PostMapping("/credentials/validate")
+    public ResponseEntity<HotelCredentialResponseDTO> validarAccesoHotel(
+            @RequestBody HotelAccessDTO hotelAccessDTO,
+            @RequestHeader("Authorization") String header) {
+
+        String token = header.replace("Bearer ", "").split(",")[0].trim();
+
+        HotelCredentialResponseDTO responseDTO = credentialService.validateAccess(
+                token,
+                hotelAccessDTO.getHotelId(),
+                hotelAccessDTO.getPassword()
+        );
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     /*--------------------------------------------------*/

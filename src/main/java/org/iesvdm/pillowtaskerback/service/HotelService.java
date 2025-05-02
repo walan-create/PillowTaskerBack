@@ -16,6 +16,7 @@ import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -36,6 +37,9 @@ public class HotelService {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     public List<Hotel> all(){return this.hotelRepository.findAll();}
@@ -94,7 +98,7 @@ public class HotelService {
         /* Autogeneramos el Empleado para el usuario
           que ha creado el hotel y le Asignamos el rol ADMIN*/
         Credential credential = new Credential();
-        credential.setPassword(dto.getPassword());
+        credential.setPassword(passwordEncoder.encode(dto.getPassword())); // Codificamos la contraseña antes de persistirla en BD
         credential.setRol(CredentialTypeEnum.ADMIN);
         credential.setUser(user);
         credential.setHotel(hotel);
@@ -117,7 +121,6 @@ public class HotelService {
         // Combinar ambos hoteles sin repeticiones
         Set<Hotel> allHotels = new HashSet<>(hotelsByOwner);
         allHotels.addAll(hotelsByEmployee);
-
         // Mapear los hoteles a HotelDTO
         return allHotels.stream()
                 .map(hotel -> new HotelDTO(
@@ -125,7 +128,8 @@ public class HotelService {
                         hotel.getName(),
                         hotel.getPostalCode(),
                         hotel.getAddress(),
-                        hotel.getCredentials().size(), //Calculamos el total de las credenciales por hotel
+                        hotel.getCredentials().size(),
+                        hotel.getRooms().size(), //Calculamos el total de las credenciales por hotel
                         hotel.getOwner().getId() //Asociamos el id del dueño
                 ))
                 .collect(Collectors.toList());

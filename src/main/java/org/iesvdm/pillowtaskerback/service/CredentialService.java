@@ -3,24 +3,32 @@ package org.iesvdm.pillowtaskerback.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
+import org.iesvdm.pillowtaskerback.dto.HotelCredentialResponseDTO;
 import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
+import org.iesvdm.pillowtaskerback.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CredentialService {
 
@@ -30,6 +38,10 @@ public class CredentialService {
     UserRepository userRepository;
     @Autowired
     HotelRepository hotelRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -86,7 +98,10 @@ public class CredentialService {
         return credentialRepository.save(credential);
     }
 
-
+    public Optional<Credential> findByUserAndHotel(Long userId, Long hotelId) {
+        return credentialRepository.findByUserIdAndHotelId(userId, hotelId);
+    }
+    
     public List<CredentialDTO> getAllCredentialsDTObyHotelId(Long hotelId) {
 
         // Obtener las credenciales del hotel
@@ -105,4 +120,58 @@ public class CredentialService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public HotelCredentialResponseDTO validateAccess(String token, Long hotelId, String passwordIngresada) {
+
+        // 1. Validar token
+        if (!jwtUtil.isTokenValid(token)) {
+            log.warn("Token inválido: {}", token);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido");
+        }
+
+        // 2. Extraer userId del token
+        Long userId = jwtUtil.extractUserId(token);
+        log.info("Token válido. userId extraído: {}", userId);
+
+        // 3. Buscar credencial
+        Credential credencial = credentialRepository.findByUserIdAndHotelId(userId, hotelId)
+                .orElseThrow(() -> {
+                    log.warn("No se encontró credencial para userId={} y hotelId={}", userId, hotelId);
+                    return new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes acceso a este hotel");
+                });
+
+        log.info("Credencial encontrada. Validando contraseña...");
+
+        // 4. Validar contraseña
+        if (!passwordEncoder.matches(passwordIngresada, credencial.getPassword())) {
+            log.warn("Contraseña incorrecta para userId={} en hotelId={}", userId, hotelId);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Contraseña incorrecta");
+        }
+
+        log.info("Contraseña válida. Acceso concedido a userId={} en hotelId={}", userId, hotelId);
+
+        // 5. Preparar respuesta
+        Hotel hotel = credencial.getHotel();
+        User user = credencial.getUser();
+
+        HotelCredentialResponseDTO response = new HotelCredentialResponseDTO(
+                credencial.getId(),
+                credencial.getRol(),
+                hotel.getId(),
+                hotel.getName(),
+                hotel.getAddress(),
+                hotel.getPostalCode(),
+                user.getName(),
+                user.getSurname1(),
+                user.getSurname2(),
+                user.getDni()
+        );
+
+        log.info("Respuesta generada correctamente: {}", response);
+
+        return response;
+    }
+
+
+
 }

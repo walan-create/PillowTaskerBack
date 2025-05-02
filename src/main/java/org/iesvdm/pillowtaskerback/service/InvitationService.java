@@ -82,11 +82,9 @@ public class InvitationService {
                 .orElseThrow(() -> new RuntimeException("Invitación no encontradacon ID:" + invitationId));
 
         if (accepted) {
-            System.out.println("Aceptada");
             // Buscar el usuario por correo (asociado con la invitación)
             User user = userRepository.findByMail(invitation.getMail())
                     .orElseThrow(() -> new UsuarioByMailNotFoundException(invitation.getMail()));
-            System.out.println("Usuario encontrado: "+user.getName());
             // Crear la credencial
             Credential credential = new Credential();
             credential.setHotel(invitation.getHotel());

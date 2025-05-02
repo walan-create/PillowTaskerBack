@@ -25,6 +25,7 @@ public class UserController {
 
     @Autowired
     private final UserService userService;
+
     @Autowired
     private final HotelService hotelService;
 
@@ -94,19 +95,16 @@ public class UserController {
         return ResponseEntity.ok(invitations); // Siempre devuelve 200 OK con la lista, aunque esté vacía
     }
 
-
     // ACEPTAR O NEGAR INVITACIÓN
     @PatchMapping("/invitations/{invitationId}/respond")
     public ResponseEntity<Void> respondToInvitation(
             @PathVariable Long invitationId,
             @RequestBody InvitationResponseDTO responseDto) {
-    System.out.println("Entra");
         boolean processed = invitationService.processInvitationResponse(
                 invitationId,
                 responseDto.isAccepted(),
                 responseDto.getPassword()
         );
-    System.out.println("Procesed "+processed);
         return processed
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();

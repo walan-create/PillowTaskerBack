@@ -12,6 +12,7 @@ public class HotelDTO {
     private String postalCode;
     private String address;
     private Integer totalEmployees;
+    private Integer totalRooms;
     private Long userId;  // Agregamos el userId para saber el dueño
 
 }
