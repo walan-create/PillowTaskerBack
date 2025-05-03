@@ -9,6 +9,7 @@ import org.iesvdm.pillowtaskerback.enums.InvitationStateEnum;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

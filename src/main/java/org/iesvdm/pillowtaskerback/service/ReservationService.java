@@ -15,6 +15,7 @@ import org.iesvdm.pillowtaskerback.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -264,7 +265,6 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-
     @Transactional
     public Reservation checkOutReservation(Long hotelId, Long reservationId) {
 
@@ -278,7 +278,7 @@ public class ReservationService {
         // Para cada habitación asociada, quitar esta reserva y cambiar estado
         for (Room room : reservation.getRooms()) {
             room.getReservations().remove(reservation); // Eliminar relación de la habitación hacia la reserva
-            room.setState(RoomStateEnum.CLEAN); // Marcar para limpieza
+            room.setState(RoomStateEnum.DIRTY); // Marcar para limpieza
         }
 
         // Para cada cliente asociado, quitar esta reserva
@@ -290,6 +290,30 @@ public class ReservationService {
         // así conservamos el historial de qué habitaciones y clientes tuvo esta reserva.
 
         return reservationRepository.save(reservation);
+    }
+
+    public Long getCheckInsTodayByHotel(Long hotelId) {
+        LocalDate today = LocalDate.now();
+        return reservationRepository.findDistinctByRooms_Hotel_Id(hotelId).stream()
+                .filter(reservation -> reservation.getEntryDate().toLocalDate().isEqual(today)
+                        && reservation.getState() == ReservationStateEnum.CHECKED_IN)
+                .count();
+    }
+
+    public Long getPendingCheckInsTodayByHotel(Long hotelId) {
+        LocalDate today = LocalDate.now();
+        return reservationRepository.findDistinctByRooms_Hotel_Id(hotelId).stream()
+                .filter(reservation -> reservation.getEntryDate().toLocalDate().isEqual(today)
+                        && reservation.getState() == ReservationStateEnum.ACTIVE)
+                .count();
+    }
+
+    public Long getCompletedCheckInsByHotel(Long hotelId) {
+        LocalDate today = LocalDate.now();
+        return reservationRepository.findDistinctByRooms_Hotel_Id(hotelId).stream()
+                .filter(reservation -> reservation.getEntryDate().toLocalDate().isEqual(today)
+                        && reservation.getState() == ReservationStateEnum.CHECKED_IN)
+                .count();
     }
 
 }

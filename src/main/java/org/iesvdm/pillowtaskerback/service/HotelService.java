@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
+import org.iesvdm.pillowtaskerback.dto.HotelBoardDTO;
 import org.iesvdm.pillowtaskerback.dto.HotelDTO;
 import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
@@ -26,12 +27,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class HotelService {
+
+
     @Autowired
     HotelRepository hotelRepository;
-
     @Autowired
     CredentialRepository credentialRepository;
-
     @Autowired
     UserRepository userRepository;
 

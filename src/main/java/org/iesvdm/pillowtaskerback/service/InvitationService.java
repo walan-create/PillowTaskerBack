@@ -1,5 +1,7 @@
 package org.iesvdm.pillowtaskerback.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Credential;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
@@ -13,6 +15,7 @@ import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.InvitationRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +36,18 @@ public class InvitationService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PersistenceContext
+    EntityManager entityManager;
+
+    @Transactional
+    public Invitation save(Invitation invitation) {
+        invitationRepository.save(invitation);
+        entityManager.refresh(invitation);
+        return invitation;
+    }
 
     // Método para obtener todas las invitaciones de un correo electrónico
     public List<Invitation> getInvitationsByMail(String email) {
@@ -58,13 +73,15 @@ public class InvitationService {
             throw new RuntimeException("Ya existe una invitación para este correo electrónico y este hotel");
         }
 
+        invitation.setState(InvitationStateEnum.PENDING);
+
         // Asignar los datos a la invitación
         invitation.setHotel(hotel);
         invitation.setShippingDate(LocalDateTime.now());
         invitation.setState(InvitationStateEnum.PENDING);
 
         // Guardar la invitación
-        return invitationRepository.save(invitation);
+        return save(invitation);
     }
 
 
@@ -90,7 +107,7 @@ public class InvitationService {
             credential.setHotel(invitation.getHotel());
             credential.setUser(user);
             credential.setRol(invitation.getCredentialType()); // Asignar el rol de la invitación a la credencial
-            credential.setPassword(password);
+            credential.setPassword(passwordEncoder.encode(password));
 
             // Guardar la credencial
             credentialRepository.save(credential);
@@ -109,5 +126,6 @@ public class InvitationService {
         }
         invitationRepository.deleteById(invitationId);
     }
+
 
 }

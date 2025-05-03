@@ -2,10 +2,7 @@ package org.iesvdm.pillowtaskerback.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.*;
-import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
-import org.iesvdm.pillowtaskerback.dto.HotelAccessDTO;
-import org.iesvdm.pillowtaskerback.dto.HotelCredentialResponseDTO;
-import org.iesvdm.pillowtaskerback.dto.ReservationDTO;
+import org.iesvdm.pillowtaskerback.dto.*;
 import org.iesvdm.pillowtaskerback.security.JwtUtil;
 import org.iesvdm.pillowtaskerback.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,9 @@ public class HotelController {
 
     @Autowired
     CredentialService credentialService;
+
+    @Autowired
+    BoardService boardService;
 
     @Autowired
     IncidentService incidentService;
@@ -81,6 +81,13 @@ public class HotelController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteHotel(@PathVariable Long id) {
         hotelService.delete(id);
+    }
+
+    // GET BOARD DATA
+    @GetMapping("/{hotelId}/board")
+    public ResponseEntity<HotelBoardDTO> getHotelBoard(@PathVariable Long hotelId) {
+        HotelBoardDTO hotelBoardDTO = boardService.getHotelBoardByHotelId(hotelId);
+        return ResponseEntity.ok(hotelBoardDTO);
     }
 
     /*--------------------------------------------------*/
@@ -150,6 +157,8 @@ public class HotelController {
 
         return ResponseEntity.ok(responseDTO);
     }
+
+
 
     /*--------------------------------------------------*/
     /*--------------------CRUD ROOMS--------------------*/

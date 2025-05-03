@@ -1,8 +1,8 @@
 package org.iesvdm.pillowtaskerback.enums;
 
 public enum RoomStateEnum {
-    FREE,
+    AVAILABLE,
     OCCUPIED,
-    CLEAN,
+    DIRTY,
     MAINTENANCE
 }

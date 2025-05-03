@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Room;
 import org.iesvdm.pillowtaskerback.enums.RoomStateEnum;
-import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HabitacionNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -90,6 +90,29 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
+    public List<Room> getAvailableRoomsByHotel(Long hotelId) {
+        return roomRepository.findAllByHotel_id(hotelId).stream()
+                .filter(room -> room.getState() == RoomStateEnum.AVAILABLE)
+                .collect(Collectors.toList());
+    }
+
+    public List<Room> getOccupiedRoomsByHotel(Long hotelId) {
+        return roomRepository.findAllByHotel_id(hotelId).stream()
+                .filter(room -> room.getState() == RoomStateEnum.OCCUPIED)
+                .collect(Collectors.toList());
+    }
+
+    public List<Room> getDirtyRoomsByHotel(Long hotelId) {
+        return roomRepository.findAllByHotel_id(hotelId).stream()
+                .filter(room -> room.getState() == RoomStateEnum.DIRTY)
+                .collect(Collectors.toList());
+    }
+
+    public List<Room> getRoomsUnderMaintenanceByHotel(Long hotelId) {
+        return roomRepository.findAllByHotel_id(hotelId).stream()
+                .filter(room -> room.getState() == RoomStateEnum.MAINTENANCE)
+                .collect(Collectors.toList());
+    }
 
 
 }
