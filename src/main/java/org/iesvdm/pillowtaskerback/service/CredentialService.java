@@ -104,8 +104,18 @@ public class CredentialService {
     
     public List<CredentialDTO> getAllCredentialsDTObyHotelId(Long hotelId) {
 
-        // Obtener las credenciales del hotel
-        Set<Credential> credentialsSet = credentialRepository.findAllByHotel_Id(hotelId);
+        // Buscar el hotel por su ID
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+
+        // Obtener el ID del propietario del hotel para excluirlo de la lista
+        Long ownerId = hotel.getOwner().getId();
+
+        // Obtener las credenciales del hotel y filtrar las que no pertenezcan al propietario
+        Set<Credential> credentialsSet = credentialRepository.findAllByHotel_Id(hotelId)
+                .stream()
+                .filter(credential -> !credential.getUser().getId().equals(ownerId))
+                .collect(Collectors.toSet());
 
         // Mapear cada credencial a CredentialDTO
         return credentialsSet.stream()
