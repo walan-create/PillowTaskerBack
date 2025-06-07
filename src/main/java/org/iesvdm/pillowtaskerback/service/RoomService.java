@@ -48,9 +48,9 @@ public class RoomService {
     public Room replace(Long id, Room roomDetails) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new HabitacionNotFoundException(id));
-        room.setNumberRoom(roomDetails.getNumberRoom());
+        room.setCode(roomDetails.getCode());
         room.setCapacity(roomDetails.getCapacity());
-        room.setRoomsNumber(roomDetails.getRoomsNumber());
+        room.setNumberOfRooms(roomDetails.getNumberOfRooms());
         room.setKitchen(roomDetails.isKitchen());
         room.setType(roomDetails.getType());
         room.setState(roomDetails.getState());
@@ -78,7 +78,7 @@ public class RoomService {
 
         // Verificar si ya existe una habitación con el mismo número en ese hotel
         boolean roomExists = hotel.getRooms().stream()
-                .anyMatch(r -> r.getNumberRoom().equalsIgnoreCase(room.getNumberRoom()));
+                .anyMatch(r -> r.getCode().equalsIgnoreCase(room.getCode()));
 
         if (roomExists) {
             throw new IllegalArgumentException("Ya existe una habitación con ese número en este hotel.");

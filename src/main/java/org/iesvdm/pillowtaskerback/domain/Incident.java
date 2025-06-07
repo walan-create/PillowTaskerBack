@@ -26,10 +26,5 @@ public class Incident {
     @JsonIgnore
     private Hotel hotel;
 
-    @ManyToOne
-    @ToString.Exclude
-    @JsonIgnore
-    private Credential credential;
-
 
 }

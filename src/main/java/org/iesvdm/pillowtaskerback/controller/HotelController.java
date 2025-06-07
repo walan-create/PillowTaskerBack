@@ -111,12 +111,6 @@ public class HotelController {
         return ResponseEntity.ok(credentialService.getAllCredentialsDTObyHotelId(hotelId));
     }
 
-    // GET ONE by hotel
-    @GetMapping("/{hotelId}/{credentialId}")
-    public ResponseEntity<Credential> getCredential(@PathVariable Long credentialId) {
-        return ResponseEntity.ok(credentialService.one(credentialId));
-    }
-
     // CREATE credential con Hotel y User asociado
     @PostMapping("/{hotelId}/credentials/user/{userId}")
     public ResponseEntity<Credential> createCredential(
@@ -256,7 +250,7 @@ public class HotelController {
             @PathVariable Long hotelId,
             @PathVariable Long credentialId,
             @RequestBody Incident incident) {
-        Incident createdIncident = incidentService.createIncidentForHotel(hotelId, credentialId, incident);
+        Incident createdIncident = incidentService.createIncidentForHotel(hotelId, incident);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdIncident);
     }
     // UPDATE

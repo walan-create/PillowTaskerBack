@@ -30,11 +30,11 @@ public class Room {
     private Long id;
 
     @NotNull
-    private String NumberRoom;
+    private String code;
     @NotNull
     private Integer capacity;
     @NotNull
-    private Integer roomsNumber;
+    private Integer numberOfRooms;
     @NotNull
     private boolean kitchen;
     @NotNull

@@ -72,20 +72,12 @@ public class IncidentService {
         return this.incidentRepository.findAllByHotel_id(hotelId);
     }
 
-    public Incident createIncidentForHotel(Long hotelId,Long credentialId, Incident incident) {
+    public Incident createIncidentForHotel(Long hotelId, Incident incident) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new HotelNotFoundException(hotelId));
 
-        Credential credential = credentialRepository.findById(credentialId)
-                .orElseThrow(() -> new HotelNotFoundException(credentialId));
-
-        incident.setCredential(credential);
         incident.setHotel(hotel);
 
-        credential.getIncidents().add(incident);
-        credentialService.save(credential);
-
-        hotel.getCredentials().add(credential);
         hotelService.save(hotel);
 
         return incidentRepository.save(incident);

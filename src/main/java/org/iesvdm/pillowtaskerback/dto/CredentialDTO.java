@@ -8,12 +8,13 @@ import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 public class CredentialDTO {
 
     // Info de la credencial
-    private Long CredentialId;
+    private Long id;
     private CredentialTypeEnum rol;
     private String credentialPassword;
 
     // Info del usuario
     private String name;
+    private String mail;
     private String surname1;
     private String surname2;
     private String dni;

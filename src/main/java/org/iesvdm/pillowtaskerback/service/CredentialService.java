@@ -66,9 +66,7 @@ public class CredentialService {
         Credential credential = credentialRepository.findById(id)
                 .orElseThrow(() -> new CredentialNotFoundException(id));
 
-        credential.setRol(credentialDetails.getRol());
-        credential.setPassword(credentialDetails.getPassword());
-        credential.setIncidents(credentialDetails.getIncidents());
+        credential.setRol(credentialDetails.getRol()); // Solo actualizamos rol
 
         return credentialRepository.save(credential);
     }
@@ -124,12 +122,32 @@ public class CredentialService {
                         credential.getRol(),
                         credential.getPassword(),
                         credential.getUser().getName(),
+                        credential.getUser().getMail(),
                         credential.getUser().getSurname1(),
                         credential.getUser().getSurname2(),
                         credential.getUser().getDni()
                 ))
                 .collect(Collectors.toList());
     }
+
+    public CredentialDTO getCredentialDTOById(Long credentialId) {
+        // Buscar la credencial por su ID
+        Credential credential = credentialRepository.findById(credentialId)
+                .orElseThrow(() -> new CredentialNotFoundException(credentialId));
+
+        // Mapear la credencial a CredentialDTO
+        return new CredentialDTO(
+                credential.getId(),
+                credential.getRol(),
+                credential.getPassword(),
+                credential.getUser().getName(),
+                credential.getUser().getMail(),
+                credential.getUser().getSurname1(),
+                credential.getUser().getSurname2(),
+                credential.getUser().getDni()
+        );
+    }
+
 
     public HotelCredentialResponseDTO validateAccess(String token, Long hotelId, String passwordIngresada) {
 

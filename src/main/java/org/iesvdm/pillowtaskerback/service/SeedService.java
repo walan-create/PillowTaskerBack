@@ -312,9 +312,9 @@ public class SeedService {
         //-----------------------------------------------------------------
 
         Room room1 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("101")
+                .code("101")
                 .capacity(2)
-                .roomsNumber(1)
+                .numberOfRooms(1)
                 .kitchen(true)
                 .type(RoomTypeEnum.STANDAR)
                 .state(RoomStateEnum.OCCUPIED)
@@ -323,9 +323,9 @@ public class SeedService {
                 .build());
 
         Room room2 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("102")
+                .code("102")
                 .capacity(4)
-                .roomsNumber(2)
+                .numberOfRooms(2)
                 .kitchen(false)
                 .type(RoomTypeEnum.STANDAR)
                 .state(RoomStateEnum.AVAILABLE)
@@ -334,9 +334,9 @@ public class SeedService {
                 .build());
 
         Room room3 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("103")
+                .code("103")
                 .capacity(3)
-                .roomsNumber(1)
+                .numberOfRooms(1)
                 .kitchen(true)
                 .type(RoomTypeEnum.SUITE)
                 .state(RoomStateEnum.OCCUPIED)
@@ -345,9 +345,9 @@ public class SeedService {
                 .build());
 
         Room room4 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("104")
+                .code("104")
                 .capacity(1)
-                .roomsNumber(1)
+                .numberOfRooms(1)
                 .kitchen(false)
                 .type(RoomTypeEnum.STANDAR)
                 .state(RoomStateEnum.DIRTY)
@@ -356,9 +356,9 @@ public class SeedService {
                 .build());
 
         Room room5 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("105")
+                .code("105")
                 .capacity(2)
-                .roomsNumber(1)
+                .numberOfRooms(1)
                 .kitchen(true)
                 .type(RoomTypeEnum.ADAPTABLE)
                 .state(RoomStateEnum.AVAILABLE)
@@ -367,9 +367,9 @@ public class SeedService {
                 .build());
 
         Room room6 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("106")
+                .code("106")
                 .capacity(5)
-                .roomsNumber(3)
+                .numberOfRooms(3)
                 .kitchen(true)
                 .type(RoomTypeEnum.SUITE)
                 .state(RoomStateEnum.AVAILABLE)
@@ -378,9 +378,9 @@ public class SeedService {
                 .build());
 
         Room room7 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("107")
+                .code("107")
                 .capacity(2)
-                .roomsNumber(1)
+                .numberOfRooms(1)
                 .kitchen(false)
                 .type(RoomTypeEnum.ADAPTABLE)
                 .state(RoomStateEnum.AVAILABLE)
@@ -389,9 +389,9 @@ public class SeedService {
                 .build());
 
         Room room8 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("108")
+                .code("108")
                 .capacity(3)
-                .roomsNumber(2)
+                .numberOfRooms(2)
                 .kitchen(true)
                 .type(RoomTypeEnum.SUITE)
                 .state(RoomStateEnum.AVAILABLE)
@@ -400,9 +400,9 @@ public class SeedService {
                 .build());
 
         Room room9 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
-                .NumberRoom("109")
+                .code("109")
                 .capacity(3)
-                .roomsNumber(2)
+                .numberOfRooms(2)
                 .kitchen(true)
                 .type(RoomTypeEnum.STANDAR)
                 .state(RoomStateEnum.MAINTENANCE)

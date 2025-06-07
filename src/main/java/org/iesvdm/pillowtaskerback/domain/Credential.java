@@ -43,8 +43,6 @@ public class Credential {
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 
-    @OneToMany(mappedBy = "credential", fetch = FetchType.EAGER)
-    Set<Incident> incidents = new HashSet<>();
 
 
 }

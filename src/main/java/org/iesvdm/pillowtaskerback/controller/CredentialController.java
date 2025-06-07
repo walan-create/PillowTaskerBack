@@ -2,6 +2,7 @@ package org.iesvdm.pillowtaskerback.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.pillowtaskerback.domain.Credential;
+import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
 import org.iesvdm.pillowtaskerback.service.CredentialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,8 @@ public class CredentialController {
 
     // GET ONE
     @GetMapping("/{credentialId}")
-    public ResponseEntity<Credential> getCredential(@PathVariable Long credentialId) {
-        return ResponseEntity.ok(credentialService.one(credentialId));
+    public ResponseEntity<CredentialDTO> getCredential(@PathVariable Long credentialId) {
+        return ResponseEntity.ok(credentialService.getCredentialDTOById(credentialId));
     }
 
     // UPDATE

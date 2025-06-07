@@ -8,6 +8,7 @@ import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.Invitation;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.enums.InvitationStateEnum;
+import org.iesvdm.pillowtaskerback.exception.ApiException;
 import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
 import org.iesvdm.pillowtaskerback.exception.UsuarioByMailNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
@@ -15,6 +16,7 @@ import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.InvitationRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,22 +67,31 @@ public class InvitationService {
     public Invitation sendInvitation(Long hotelId, Invitation invitation) {
         // Buscar el hotel por ID
         Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+                .orElseThrow(() -> new ApiException("No se encontró el hotel con ID: " + hotelId, HttpStatus.NOT_FOUND));
 
         // Verificar si ya existe una invitación con ese correo electrónico y hotel
         boolean invitationExists = invitationRepository.existsByMailAndHotelId(invitation.getMail(), hotelId);
         if (invitationExists) {
-            throw new RuntimeException("Ya existe una invitación para este correo electrónico y este hotel");
+            throw new ApiException("Ya existe una invitación para este correo electrónico", HttpStatus.BAD_REQUEST);
         }
 
-        invitation.setState(InvitationStateEnum.PENDING);
+        // Buscar el usuario por email y lanzar ApiException si no existe
+        User user = userRepository.findByMail(invitation.getMail())
+                .orElseThrow(() -> new ApiException("No existe ningún usuario con el mail proporcionado", HttpStatus.NOT_FOUND));
 
-        // Asignar los datos a la invitación
+        // Verificar si ya tiene una credencial en el hotel
+        boolean hasCredential = credentialRepository.findAllByHotel_Id(hotelId)
+                .stream()
+                .anyMatch(credential -> credential.getUser().getId().equals(user.getId()));
+        if (hasCredential) {
+            throw new ApiException("El usuario ya pertenece al hotel", HttpStatus.BAD_REQUEST);
+        }
+
+        // Preparar y guardar la invitación
+        invitation.setState(InvitationStateEnum.PENDING);
         invitation.setHotel(hotel);
         invitation.setShippingDate(LocalDateTime.now());
-        invitation.setState(InvitationStateEnum.PENDING);
 
-        // Guardar la invitación
         return save(invitation);
     }
 
