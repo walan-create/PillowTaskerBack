@@ -3,7 +3,7 @@ package org.iesvdm.pillowtaskerback.service;
 import jakarta.transaction.Transactional;
 import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.dto.HotelBoardDTO;
-import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.ApiException;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +20,18 @@ public class BoardService {
     @Autowired
     ClientService clientService;
 
+/**
+ * Obtiene el tablero de información de un hotel a partir de su ID.
+ * Calcula y devuelve estadísticas relevantes como número de clientes, habitaciones disponibles, ocupadas, limpias, sucias, etc.
+ *
+ * @param hotelId identificador del hotel
+ * @return DTO con los datos del tablero del hotel
+ * @throws ApiException si no se encuentra el hotel con el ID proporcionado
+ */
     @Transactional
     public HotelBoardDTO getHotelBoardByHotelId(Long hotelId) {
         Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+                .orElseThrow(() -> new ApiException("Hotel con id " + hotelId + " no encontrado", org.springframework.http.HttpStatus.NOT_FOUND));
 
         // Aquí se calculan los datos necesarios para el HotelBoardDTO
         Long totalClients = clientService.getClientsByHotel(hotelId).stream().count();

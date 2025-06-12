@@ -9,13 +9,18 @@ import org.iesvdm.pillowtaskerback.dto.HotelDTOAutoCreateCredential;
 import org.iesvdm.pillowtaskerback.enums.CredentialTypeEnum;
 import org.iesvdm.pillowtaskerback.enums.RoomStateEnum;
 import org.iesvdm.pillowtaskerback.enums.RoomTypeEnum;
+import org.iesvdm.pillowtaskerback.exception.ApiException;
 import org.iesvdm.pillowtaskerback.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
+/**
+ * Servicio para inicializar y poblar la base de datos con datos de prueba.
+ */
 @Service
 public class SeedService {
 
@@ -56,6 +61,12 @@ public class SeedService {
     private UserRepository userRepository;
 
     // Borra toda la DATA
+    /**
+     * Borra todos los datos de la base de datos.
+     *
+     * @return true si la operación fue exitosa, false si hubo algún error
+     * @throws ApiException si ocurre un error al eliminar los datos
+     */
     public boolean deleteAllDataBase() {
         try {
             hotelRepository.deleteAll();
@@ -68,14 +79,15 @@ public class SeedService {
             userRepository.deleteAll();
             return true; // Todo salió bien
         } catch (Exception e) {
-            e.printStackTrace(); // Registrar el error para depuración
-            return false; // Algo falló
+            // Registrar el error para depuración
+            throw new ApiException("Error al eliminar los datos de la base de datos.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * Este es un metodo que al ser llamado limpia la Base de Datos y la llena con datos de prueba.
      * @return Boolean de creación exitosa.
+     * @throws ApiException si ocurre un error durante la siembra de datos
      */
     @Transactional
     public boolean seedDatabase() {
@@ -199,11 +211,11 @@ public class SeedService {
                 .sendInvitation(
                         hotel1user1.getId(),
                         Invitation.builder()
-                                    .mail("user2@example.com")
-                                    .shippingDate(LocalDateTime.now())
-                                    .hotel(hotel1user1)
-                                    .credentialType(CredentialTypeEnum.RECEPTIONIST)
-                                    .build()
+                                .mail("user2@example.com")
+                                .shippingDate(LocalDateTime.now())
+                                .hotel(hotel1user1)
+                                .credentialType(CredentialTypeEnum.RECEPTIONIST)
+                                .build()
                 );
 
         Invitation invitation2 = invitationService
@@ -296,8 +308,6 @@ public class SeedService {
                                 .build()
                 );
 
-
-
         // Aceptamos las invitaciones
         invitationService.processInvitationResponse(invitation1.getId(), true, "hotelpass");
         invitationService.processInvitationResponse(invitation2.getId(), true, "hotelpass");
@@ -305,7 +315,6 @@ public class SeedService {
         invitationService.processInvitationResponse(invitation4.getId(), true, "hotelpass");
         invitationService.processInvitationResponse(invitation5.getId(), true, "hotelpass");
         invitationService.processInvitationResponse(invitation6.getId(), true, "hotelpass");
-
 
         //-----------------------------------------------------------------
         //------------------ Creación de Habitaciones ---------------------
@@ -409,7 +418,6 @@ public class SeedService {
                 .hotel(null)
                 .reservations(new HashSet<>())
                 .build());
-
 
         return true;
     }

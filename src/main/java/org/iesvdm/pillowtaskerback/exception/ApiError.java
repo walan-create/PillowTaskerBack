@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ApiError {
 
+    // Con esta clase manejo mis errores personalizados para que el frontend pueda capturarlo.
     private LocalDateTime timestamp;
     private int status;
     private String error;

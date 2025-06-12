@@ -9,8 +9,6 @@ import org.iesvdm.pillowtaskerback.domain.Invitation;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.enums.InvitationStateEnum;
 import org.iesvdm.pillowtaskerback.exception.ApiException;
-import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
-import org.iesvdm.pillowtaskerback.exception.UsuarioByMailNotFoundException;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.InvitationRepository;
@@ -44,6 +42,12 @@ public class InvitationService {
     @PersistenceContext
     EntityManager entityManager;
 
+    /**
+     * Guarda una nueva invitación en la base de datos y actualiza su estado.
+     *
+     * @param invitation invitación a guardar
+     * @return invitación guardada
+     */
     @Transactional
     public Invitation save(Invitation invitation) {
         invitationRepository.save(invitation);
@@ -51,35 +55,37 @@ public class InvitationService {
         return invitation;
     }
 
-    // Método para obtener todas las invitaciones de un correo electrónico
+    /**
+     * Obtiene todas las invitaciones asociadas a un correo electrónico.
+     *
+     * @param email correo electrónico del usuario
+     * @return lista de invitaciones encontradas
+     */
     public List<Invitation> getInvitationsByMail(String email) {
         return invitationRepository.findByMail(email);
     }
 
     /**
-     * Enviar una invitación para un hotel con un tipo de rol especificado.
+     * Envía una invitación para un hotel con un tipo de rol especificado.
      *
-     * @param hotelId ID del hotel al que se envía la invitación.
-     * @param invitation Objeto de la invitación a enviar.
-     * @return La invitación guardada en la base de datos.
+     * @param hotelId ID del hotel al que se envía la invitación
+     * @param invitation objeto de la invitación a enviar
+     * @return invitación guardada en la base de datos
+     * @throws ApiException si el hotel no existe, ya existe una invitación para ese correo, el usuario no existe o ya pertenece al hotel
      */
     @Transactional
     public Invitation sendInvitation(Long hotelId, Invitation invitation) {
-        // Buscar el hotel por ID
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new ApiException("No se encontró el hotel con ID: " + hotelId, HttpStatus.NOT_FOUND));
 
-        // Verificar si ya existe una invitación con ese correo electrónico y hotel
         boolean invitationExists = invitationRepository.existsByMailAndHotelId(invitation.getMail(), hotelId);
         if (invitationExists) {
             throw new ApiException("Ya existe una invitación para este correo electrónico", HttpStatus.BAD_REQUEST);
         }
 
-        // Buscar el usuario por email y lanzar ApiException si no existe
         User user = userRepository.findByMail(invitation.getMail())
                 .orElseThrow(() -> new ApiException("No existe ningún usuario con el mail proporcionado", HttpStatus.NOT_FOUND));
 
-        // Verificar si ya tiene una credencial en el hotel
         boolean hasCredential = credentialRepository.findAllByHotel_Id(hotelId)
                 .stream()
                 .anyMatch(credential -> credential.getUser().getId().equals(user.getId()));
@@ -87,7 +93,6 @@ public class InvitationService {
             throw new ApiException("El usuario ya pertenece al hotel", HttpStatus.BAD_REQUEST);
         }
 
-        // Preparar y guardar la invitación
         invitation.setState(InvitationStateEnum.PENDING);
         invitation.setHotel(hotel);
         invitation.setShippingDate(LocalDateTime.now());
@@ -95,48 +100,46 @@ public class InvitationService {
         return save(invitation);
     }
 
-
     /**
-     * Procesar la respuesta de una invitación (aceptada o rechazada).
+     * Procesa la respuesta de una invitación (aceptada o rechazada).
      *
-     * @param invitationId ID de la invitación a procesar.
-     * @param accepted Indica si la invitación fue aceptada o rechazada.
-     * @param password Contraseña para la credencial.
-     * @return `true` si la operación fue exitosa, `false` si no.
+     * @param invitationId ID de la invitación a procesar
+     * @param accepted indica si la invitación fue aceptada o rechazada
+     * @param password contraseña para la credencial (si se acepta)
+     * @return true si la operación fue exitosa
+     * @throws ApiException si la invitación o el usuario no existen
      */
     public boolean processInvitationResponse(Long invitationId, boolean accepted, String password) {
-        // Buscar la invitación por ID
         Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new RuntimeException("Invitación no encontradacon ID:" + invitationId));
+                .orElseThrow(() -> new ApiException("Invitación no encontrada con ID: " + invitationId, HttpStatus.NOT_FOUND));
 
         if (accepted) {
-            // Buscar el usuario por correo (asociado con la invitación)
             User user = userRepository.findByMail(invitation.getMail())
-                    .orElseThrow(() -> new UsuarioByMailNotFoundException(invitation.getMail()));
-            // Crear la credencial
+                    .orElseThrow(() -> new ApiException("No existe ningún usuario con el mail proporcionado", HttpStatus.NOT_FOUND));
             Credential credential = new Credential();
             credential.setHotel(invitation.getHotel());
             credential.setUser(user);
-            credential.setRol(invitation.getCredentialType()); // Asignar el rol de la invitación a la credencial
+            credential.setRol(invitation.getCredentialType());
             credential.setPassword(passwordEncoder.encode(password));
-
-            // Guardar la credencial
             credentialRepository.save(credential);
         }
 
-        // Eliminar la invitación en cualquier caso (aceptada o rechazada)
         invitationRepository.delete(invitation);
         return true;
     }
 
-    // Método para eliminar una invitación específica basada en el correo electrónico y el ID de la invitación
+    /**
+     * Elimina una invitación específica por su ID.
+     *
+     * @param invitationId ID de la invitación a eliminar
+     * @throws ApiException si la invitación no existe
+     */
     @Transactional
     public void deleteInvitationById(Long invitationId) {
         if (!invitationRepository.existsById(invitationId)) {
-            throw new RuntimeException("Invitación no encontrada con ID: " + invitationId);
+            throw new ApiException("Invitación no encontrada con ID: " + invitationId, HttpStatus.NOT_FOUND);
         }
         invitationRepository.deleteById(invitationId);
     }
-
 
 }

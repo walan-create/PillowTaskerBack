@@ -2,6 +2,7 @@ package org.iesvdm.pillowtaskerback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -44,11 +45,13 @@ public class Room {
 
     @ManyToOne
     @ToString.Exclude
-    @JsonIgnore
+    //@JsonIgnore
     private Hotel hotel;
 
     @ManyToMany(mappedBy = "rooms")
-    @JsonIgnore
+    @ToString.Exclude
+    //@JsonIgnore
+    //@JsonManagedReference
     private Set<Reservation> reservations = new HashSet<>();
 
 }

@@ -1,3 +1,4 @@
+// src/main/java/org/iesvdm/pillowtaskerback/service/CredentialService.java
 package org.iesvdm.pillowtaskerback.service;
 
 import jakarta.persistence.EntityManager;
@@ -9,9 +10,7 @@ import org.iesvdm.pillowtaskerback.domain.Hotel;
 import org.iesvdm.pillowtaskerback.domain.User;
 import org.iesvdm.pillowtaskerback.dto.CredentialDTO;
 import org.iesvdm.pillowtaskerback.dto.HotelCredentialResponseDTO;
-import org.iesvdm.pillowtaskerback.exception.CredentialNotFoundException;
-import org.iesvdm.pillowtaskerback.exception.HotelNotFoundException;
-import org.iesvdm.pillowtaskerback.exception.UsuarioNotFoundException;
+import org.iesvdm.pillowtaskerback.exception.ApiException;
 import org.iesvdm.pillowtaskerback.repository.CredentialRepository;
 import org.iesvdm.pillowtaskerback.repository.HotelRepository;
 import org.iesvdm.pillowtaskerback.repository.UserRepository;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +44,21 @@ public class CredentialService {
     @PersistenceContext
     EntityManager entityManager;
 
+    /**
+     * Devuelve la lista completa de credenciales.
+     *
+     * @return lista de todas las credenciales
+     */
     public List<Credential> all() {
         return this.credentialRepository.findAll();
     }
 
+    /**
+     * Guarda una nueva credencial en la base de datos y actualiza su estado.
+     *
+     * @param credential credencial a guardar
+     * @return credencial guardada
+     */
     @Transactional
     public Credential save(Credential credential) {
         credentialRepository.save(credential);
@@ -57,65 +66,105 @@ public class CredentialService {
         return credential;
     }
 
+    /**
+     * Busca y devuelve una credencial por su id.
+     *
+     * @param id identificador de la credencial
+     * @return credencial encontrada
+     * @throws ApiException si no se encuentra la credencial
+     */
     public Credential one(Long id) {
         return credentialRepository.findById(id)
-                .orElseThrow(() -> new CredentialNotFoundException(id));
+                .orElseThrow(() -> new ApiException("Credencial con id " + id + " no encontrada", HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Reemplaza el rol de una credencial existente.
+     *
+     * @param id identificador de la credencial a modificar
+     * @param credentialDetails datos nuevos de la credencial
+     * @return credencial actualizada
+     * @throws ApiException si no se encuentra la credencial
+     */
     public Credential replace(Long id, Credential credentialDetails) {
         Credential credential = credentialRepository.findById(id)
-                .orElseThrow(() -> new CredentialNotFoundException(id));
+                .orElseThrow(() -> new ApiException("Credencial con id " + id + " no encontrada", HttpStatus.NOT_FOUND));
 
-        credential.setRol(credentialDetails.getRol()); // Solo actualizamos rol
-
+        credential.setRol(credentialDetails.getRol());
         return credentialRepository.save(credential);
     }
 
-
+    /**
+     * Elimina una credencial por su id.
+     *
+     * @param id identificador de la credencial a eliminar
+     * @throws ApiException si no se encuentra la credencial
+     */
     public void delete(Long id) {
-        this.credentialRepository.findById(id).map(h -> {
-                    this.credentialRepository.delete(h);
-                    return h;
-                })
-                .orElseThrow(() -> new CredentialNotFoundException(id));
+        Credential credential = credentialRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Credencial con id " + id + " no encontrada", HttpStatus.NOT_FOUND));
+        credentialRepository.delete(credential);
     }
 
+    /**
+     * Obtiene la lista de credenciales asociadas a un hotel.
+     *
+     * @param hotelId identificador del hotel
+     * @return lista de credenciales del hotel
+     */
     public List<Credential> getCredentialsByHotel(Long hotelId) {
         Set<Credential> credentialsSet = credentialRepository.findAllByHotel_Id(hotelId);
         return new ArrayList<>(credentialsSet);
     }
 
+    /**
+     * Crea una nueva credencial asociada a un hotel y usuario.
+     *
+     * @param hotelId identificador del hotel
+     * @param userId identificador del usuario
+     * @param credential credencial a crear
+     * @return credencial creada y asociada
+     * @throws ApiException si el hotel o el usuario no existen
+     */
     public Credential createCredential(Long hotelId, Long userId, Credential credential) {
         Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new HotelNotFoundException(hotelId));
+                .orElseThrow(() -> new ApiException("Hotel con id " + hotelId + " no encontrado", HttpStatus.NOT_FOUND));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsuarioNotFoundException(userId));
+                .orElseThrow(() -> new ApiException("Usuario con id " + userId + " no encontrado", HttpStatus.NOT_FOUND));
 
         credential.setHotel(hotel);
         credential.setUser(user);
         return credentialRepository.save(credential);
     }
 
+    /**
+     * Busca una credencial por usuario y hotel.
+     *
+     * @param userId identificador del usuario
+     * @param hotelId identificador del hotel
+     * @return credencial encontrada (opcional)
+     */
     public Optional<Credential> findByUserAndHotel(Long userId, Long hotelId) {
         return credentialRepository.findByUserIdAndHotelId(userId, hotelId);
     }
-    
+
+    /**
+     * Devuelve todas las credenciales (DTO) de un hotel, excluyendo al propietario.
+     *
+     * @param hotelId identificador del hotel
+     * @return lista de credenciales DTO del hotel
+     * @throws ApiException si no se encuentra el hotel
+     */
     public List<CredentialDTO> getAllCredentialsDTObyHotelId(Long hotelId) {
-
-        // Buscar el hotel por su ID
         Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new HotelNotFoundException(hotelId));
-
-        // Obtener el ID del propietario del hotel para excluirlo de la lista
+                .orElseThrow(() -> new ApiException("Hotel con id " + hotelId + " no encontrado", HttpStatus.NOT_FOUND));
         Long ownerId = hotel.getOwner().getId();
 
-        // Obtener las credenciales del hotel y filtrar las que no pertenezcan al propietario
         Set<Credential> credentialsSet = credentialRepository.findAllByHotel_Id(hotelId)
                 .stream()
                 .filter(credential -> !credential.getUser().getId().equals(ownerId))
                 .collect(Collectors.toSet());
 
-        // Mapear cada credencial a CredentialDTO
         return credentialsSet.stream()
                 .map(credential -> new CredentialDTO(
                         credential.getId(),
@@ -130,12 +179,17 @@ public class CredentialService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Devuelve una credencial (DTO) por su id.
+     *
+     * @param credentialId identificador de la credencial
+     * @return credencial DTO encontrada
+     * @throws ApiException si no se encuentra la credencial
+     */
     public CredentialDTO getCredentialDTOById(Long credentialId) {
-        // Buscar la credencial por su ID
         Credential credential = credentialRepository.findById(credentialId)
-                .orElseThrow(() -> new CredentialNotFoundException(credentialId));
+                .orElseThrow(() -> new ApiException("Credencial con id " + credentialId + " no encontrada", HttpStatus.NOT_FOUND));
 
-        // Mapear la credencial a CredentialDTO
         return new CredentialDTO(
                 credential.getId(),
                 credential.getRol(),
@@ -148,37 +202,39 @@ public class CredentialService {
         );
     }
 
-
+    /**
+     * Valida el acceso de un usuario a un hotel mediante token y contraseña.
+     *
+     * @param token token JWT del usuario
+     * @param hotelId identificador del hotel
+     * @param passwordIngresada contraseña introducida por el usuario
+     * @return respuesta con los datos de la credencial y hotel
+     * @throws ApiException si el token es inválido, la credencial no existe o la contraseña es incorrecta
+     */
     public HotelCredentialResponseDTO validateAccess(String token, Long hotelId, String passwordIngresada) {
-
-        // 1. Validar token
         if (!jwtUtil.isTokenValid(token)) {
             log.warn("Token inválido: {}", token);
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido");
+            throw new ApiException("Token inválido", HttpStatus.UNAUTHORIZED);
         }
 
-        // 2. Extraer userId del token
         Long userId = jwtUtil.extractUserId(token);
         log.info("Token válido. userId extraído: {}", userId);
 
-        // 3. Buscar credencial
         Credential credencial = credentialRepository.findByUserIdAndHotelId(userId, hotelId)
                 .orElseThrow(() -> {
                     log.warn("No se encontró credencial para userId={} y hotelId={}", userId, hotelId);
-                    return new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes acceso a este hotel");
+                    return new ApiException("No tienes acceso a este hotel", HttpStatus.FORBIDDEN);
                 });
 
         log.info("Credencial encontrada. Validando contraseña...");
 
-        // 4. Validar contraseña
         if (!passwordEncoder.matches(passwordIngresada, credencial.getPassword())) {
             log.warn("Contraseña incorrecta para userId={} en hotelId={}", userId, hotelId);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Contraseña incorrecta");
+            throw new ApiException("Contraseña incorrecta", HttpStatus.FORBIDDEN);
         }
 
         log.info("Contraseña válida. Acceso concedido a userId={} en hotelId={}", userId, hotelId);
 
-        // 5. Preparar respuesta
         Hotel hotel = credencial.getHotel();
         User user = credencial.getUser();
 
@@ -199,7 +255,4 @@ public class CredentialService {
 
         return response;
     }
-
-
-
 }

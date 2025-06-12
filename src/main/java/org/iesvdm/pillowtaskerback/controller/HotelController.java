@@ -245,10 +245,9 @@ public class HotelController {
         return ResponseEntity.ok(incidentService.one(incidentId));
     }
     // CREATE con Hotel y User asociado
-    @PostMapping("/{hotelId}/incidents/credential/{credentialId}")
+    @PostMapping("/{hotelId}/incidents")
     public ResponseEntity<Incident> createIncident(
             @PathVariable Long hotelId,
-            @PathVariable Long credentialId,
             @RequestBody Incident incident) {
         Incident createdIncident = incidentService.createIncidentForHotel(hotelId, incident);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdIncident);
@@ -293,17 +292,6 @@ public class HotelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
     }
 
-    // CREATE Se amplia reserva (se crea una nueva y se pasa como parametro el id de la anterior)
-    @PostMapping("/{hotelId}/reservations/{reservationId}")
-    public ResponseEntity<Reservation> extendReservation(
-            @PathVariable Long hotelId,
-            @PathVariable Long reservationId,
-            @RequestBody ReservationDTO reservationDTO) {
-
-        Reservation createdReservation = reservationService.expandReservation(hotelId,reservationId, reservationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
-    }
-
     // UPDATE con validación de solapamiento entre fechas de reservas
     @PutMapping("/{hotelId}/reservations/{reservationId}")
     public ResponseEntity<Reservation> updateIncident(@PathVariable Long reservationId, @RequestBody ReservationDTO reservationDTO) {
@@ -323,13 +311,14 @@ public class HotelController {
         return ResponseEntity.ok(updatedReservation);
     }
 
-    // CHECK-IN
+    // CHECK-OUT
     @PatchMapping("/{hotelId}/reservations/{reservationId}/checkout")
     public ResponseEntity<Reservation> checkOutReservation(
             @PathVariable Long hotelId,
             @PathVariable Long reservationId) {
 
         Reservation updatedReservation = reservationService.checkOutReservation(hotelId, reservationId);
+        System.out.println(updatedReservation);
         return ResponseEntity.ok(updatedReservation);
     }
 

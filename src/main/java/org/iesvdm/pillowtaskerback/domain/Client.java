@@ -1,6 +1,9 @@
 package org.iesvdm.pillowtaskerback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +15,10 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Client {
 
     @Id
@@ -31,12 +38,18 @@ public class Client {
     private String phoneNumber;
 
     @ManyToMany
-    @JsonIgnore
+    @JoinTable(
+            name = "client_reservation",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "reservation_id")
+    )
+    @ToString.Exclude
+//    @JsonIgnore
     private Set<Reservation> reservations;
 
     @ManyToOne
     @ToString.Exclude
-    @JsonIgnore
+//    @JsonIgnore
     private Hotel hotel;
 
 }
