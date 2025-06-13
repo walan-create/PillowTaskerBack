@@ -2,6 +2,7 @@ package org.iesvdm.pillowtaskerback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,9 @@ public class Incident {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NotNull
     private String title;
+    @NotNull
     private String concept;
     private LocalDateTime date;
 

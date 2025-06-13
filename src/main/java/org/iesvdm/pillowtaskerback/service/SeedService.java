@@ -96,10 +96,9 @@ public class SeedService {
         this.deleteAllDataBase();
 
         //-----------------------------------------------------------------
-        //------------- Creación de hoteles para cada usuario -------------
+        //------------- Creación de usuarios ------------------------------
         //-----------------------------------------------------------------
 
-        // Creación de usuarios y asignación de IDs
         User user1 = userService.save(User.builder()
                 .mail("user1@example.com")
                 .password("password")
@@ -155,17 +154,18 @@ public class SeedService {
                 .build());
 
         //-----------------------------------------------------------------
-        //------------- Creación de hoteles para cada usuario -------------
+        //------------- Creación del hotel principal ----------------------
         //-----------------------------------------------------------------
 
-        // Hoteles para user 1
-        Hotel hotel1user1 = hotelService.createHotelForUser(user1.getId(), HotelDTOAutoCreateCredential.builder()
-                .name("Hotel Bella Vista")
+        // Hotel principal: Hotel Vega de Mijas (antes Bella Vista)
+        Hotel hotelPrincipal = hotelService.createHotelForUser(user1.getId(), HotelDTOAutoCreateCredential.builder()
+                .name("Hotel Vega de Mijas")
                 .postalCode("28001")
                 .address("Calle Sita, 1")
                 .password("hotelpass")
                 .build());
 
+        // Otros hoteles (puedes mantenerlos si los necesitas)
         Hotel hotel2user1 = hotelService.createHotelForUser(user1.getId(), HotelDTOAutoCreateCredential.builder()
                 .name("Hostal Paredes")
                 .postalCode("29370")
@@ -173,7 +173,6 @@ public class SeedService {
                 .password("hotelpass")
                 .build());
 
-        // Hoteles para user 2
         Hotel hotel3 = hotelService.createHotelForUser(user2.getId(), HotelDTOAutoCreateCredential.builder()
                 .name("Duraz Village")
                 .postalCode("29370")
@@ -203,124 +202,55 @@ public class SeedService {
                 .build());
 
         //-----------------------------------------------------------------
-        //---------- Creación de invitaciones para cada usuario -----------
+        //---------- Invitaciones para Hotel Vega de Mijas ----------------
         //-----------------------------------------------------------------
 
-        // Creación de invitaciones para hotel1
-        Invitation invitation1 = invitationService
+        // Recepcionista
+        Invitation invitationRecep = invitationService
                 .sendInvitation(
-                        hotel1user1.getId(),
+                        hotelPrincipal.getId(),
                         Invitation.builder()
                                 .mail("user2@example.com")
                                 .shippingDate(LocalDateTime.now())
-                                .hotel(hotel1user1)
+                                .hotel(hotelPrincipal)
                                 .credentialType(CredentialTypeEnum.RECEPTIONIST)
                                 .build()
                 );
 
-        Invitation invitation2 = invitationService
+        // Limpieza
+        Invitation invitationCleaner = invitationService
                 .sendInvitation(
-                        hotel1user1.getId(),
-                        Invitation.builder()
-                                .mail("user3@example.com")
-                                .shippingDate(LocalDateTime.now())
-                                .hotel(hotel1user1)
-                                .credentialType(CredentialTypeEnum.ADMIN)
-                                .build()
-                );
-
-
-        Invitation invitation3 = invitationService
-                .sendInvitation(
-                        hotel1user1.getId(),
-                        Invitation.builder()
-                                .mail("user4@example.com")
-                                .shippingDate(LocalDateTime.now())
-                                .hotel(hotel1user1)
-                                .credentialType(CredentialTypeEnum.RECEPTIONIST)
-                                .build()
-                );
-
-        Invitation invitation4 = invitationService
-                .sendInvitation(
-                        hotel1user1.getId(),
-                        Invitation.builder()
-                                .mail("user5@example.com")
-                                .shippingDate(LocalDateTime.now())
-                                .hotel(hotel1user1)
-                                .credentialType(CredentialTypeEnum.ADMIN)
-                                .build()
-                );
-
-        Invitation invitation5 = invitationService
-                .sendInvitation(
-                        hotel1user1.getId(),
+                        hotelPrincipal.getId(),
                         Invitation.builder()
                                 .mail("user6@example.com")
                                 .shippingDate(LocalDateTime.now())
-                                .hotel(hotel1user1)
-                                .credentialType(CredentialTypeEnum.RECEPTIONIST)
-                                .build()
-                );
-
-        // Invitaciones para user1
-
-        Invitation invitation6 = invitationService
-                .sendInvitation(
-                        hotel3.getId(),
-                        Invitation.builder()
-                                .mail("user1@example.com")
-                                .shippingDate(LocalDateTime.now())
-                                .hotel(hotel3)
-                                .credentialType(CredentialTypeEnum.RECEPTIONIST)
-                                .build()
-                );
-
-        Invitation invitation7 = invitationService
-                .sendInvitation(
-                        hotel4.getId(),
-                        Invitation.builder()
-                                .mail("user1@example.com")
-                                .shippingDate(LocalDateTime.now())
-                                .hotel(hotel4)
-                                .credentialType(CredentialTypeEnum.RECEPTIONIST)
-                                .build()
-                );
-
-        Invitation invitation8 = invitationService
-                .sendInvitation(
-                        hotel5.getId(),
-                        Invitation.builder()
-                                .mail("user1@example.com")
-                                .shippingDate(LocalDateTime.now())
-                                .hotel(hotel5)
+                                .hotel(hotelPrincipal)
                                 .credentialType(CredentialTypeEnum.CLEANER)
                                 .build()
                 );
-        Invitation invitation9 = invitationService
+
+        // Mantenimiento
+        Invitation invitationMaintenance = invitationService
                 .sendInvitation(
-                        hotel6.getId(),
+                        hotelPrincipal.getId(),
                         Invitation.builder()
-                                .mail("user1@example.com")
+                                .mail("user5@example.com")
                                 .shippingDate(LocalDateTime.now())
-                                .hotel(hotel6)
-                                .credentialType(CredentialTypeEnum.RECEPTIONIST)
+                                .hotel(hotelPrincipal)
+                                .credentialType(CredentialTypeEnum.MAINTENANCE)
                                 .build()
                 );
 
-        // Aceptamos las invitaciones
-        invitationService.processInvitationResponse(invitation1.getId(), true, "hotelpass");
-        invitationService.processInvitationResponse(invitation2.getId(), true, "hotelpass");
-        invitationService.processInvitationResponse(invitation3.getId(), true, "hotelpass");
-        invitationService.processInvitationResponse(invitation4.getId(), true, "hotelpass");
-        invitationService.processInvitationResponse(invitation5.getId(), true, "hotelpass");
-        invitationService.processInvitationResponse(invitation6.getId(), true, "hotelpass");
+        // Aceptamos las invitaciones principales
+        invitationService.processInvitationResponse(invitationRecep.getId(), true, "hotelpass");
+        invitationService.processInvitationResponse(invitationCleaner.getId(), true, "hotelpass");
+        invitationService.processInvitationResponse(invitationMaintenance.getId(), true, "hotelpass");
 
         //-----------------------------------------------------------------
         //------------------ Creación de Habitaciones ---------------------
         //-----------------------------------------------------------------
 
-        Room room1 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("101")
                 .capacity(2)
                 .numberOfRooms(1)
@@ -331,7 +261,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room2 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("102")
                 .capacity(4)
                 .numberOfRooms(2)
@@ -342,7 +272,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room3 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("103")
                 .capacity(3)
                 .numberOfRooms(1)
@@ -353,7 +283,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room4 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("104")
                 .capacity(1)
                 .numberOfRooms(1)
@@ -364,7 +294,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room5 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("105")
                 .capacity(2)
                 .numberOfRooms(1)
@@ -375,7 +305,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room6 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("106")
                 .capacity(5)
                 .numberOfRooms(3)
@@ -386,7 +316,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room7 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("107")
                 .capacity(2)
                 .numberOfRooms(1)
@@ -397,7 +327,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room8 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("108")
                 .capacity(3)
                 .numberOfRooms(2)
@@ -408,7 +338,7 @@ public class SeedService {
                 .reservations(new HashSet<>())
                 .build());
 
-        Room room9 = roomService.createRoomForHotel( hotel1user1.getId(), Room.builder()
+        roomService.createRoomForHotel( hotelPrincipal.getId(), Room.builder()
                 .code("109")
                 .capacity(3)
                 .numberOfRooms(2)

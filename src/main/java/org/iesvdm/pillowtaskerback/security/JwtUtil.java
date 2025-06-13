@@ -11,7 +11,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     // private final String SECRET_KEY = "Xy4pX9d3Fg9sLm2D8yQs2Zp1rRit3Yj7Hk9Kr89lmBz6ZoM9s9Cv8j8L2hK";
-    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final String SECRET = "mi_clave_secreta_super_segura_que_no_cambie_1234567890_abcdefghijklmnoPQRSTUVWXYZ";
+    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 horas
 
     public String generateToken(User user) {
@@ -31,6 +32,10 @@ public class JwtUtil {
 
     public Long extractUserId(String token) {
         return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    public String extractRol(String token) {
+        return extractAllClaims(token).get("rol", String.class);
     }
 
     private Claims extractAllClaims(String token) {

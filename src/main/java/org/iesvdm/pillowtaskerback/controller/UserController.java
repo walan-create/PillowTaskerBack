@@ -80,7 +80,9 @@ public class UserController {
     // GET todos los hoteles a los que pertenece un usuario (ya sea como Owner o Employee)
     @GetMapping("/{userId}/hotels")
     public ResponseEntity<List<HotelDTO>> getAllHotelsByUserId(@PathVariable Long userId) {
+        log.info("Petición recibida para hoteles del usuario con id: {}", userId);
         List<HotelDTO> hotelDTOs = hotelService.getAllHotelsDTOByOwnerIdOrCredentialId(userId);
+        log.info("Hoteles encontrados: {}", hotelDTOs.size());
         return ResponseEntity.ok(hotelDTOs);
     }
 

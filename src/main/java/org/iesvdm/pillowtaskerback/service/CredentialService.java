@@ -255,4 +255,20 @@ public class CredentialService {
 
         return response;
     }
+
+    public boolean hasRoleInHotel(String username, Long hotelId, Set<String> roles) {
+        Optional<User> userOpt = userRepository.findByMail(username);
+        if (userOpt.isEmpty()) {
+            return false;
+        }
+        User user = userOpt.get();
+
+        Optional<Credential> credOpt = credentialRepository.findByUserIdAndHotelId(user.getId(), hotelId);
+        if (credOpt.isEmpty()) {
+            return false;
+        }
+        String rol = credOpt.get().getRol().name();
+
+        return roles.contains(rol);
+    }
 }

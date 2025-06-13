@@ -28,20 +28,26 @@ public class User {
     private Long id;
 
     @NotBlank(message = "El correo no puede estar vacío")
-    @Email(message = "Debe ser un correo válido") // Valida formato de correo
+    @Email(message = "Debe ser un correo válido")
     @Column(nullable = false, unique = true)
     private String mail;
 
     @NotBlank(message = "La contraseña no puede estar vacía")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     @Column(nullable = false)
     private String password;
 
     @NotBlank(message = "El nombre no puede estar vacío")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$", message = "El nombre solo puede contener letras y espacios")
     @Column(nullable = false)
     private String name;
 
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$", message = "El apellido solo puede contener letras y espacios")
     private String surname1;
+
     private String surname2;
+
+    @Pattern(regexp = "^[0-9]{8}[A-Z]$", message = "El DNI debe tener 8 números seguidos de una letra mayúscula")
     private String dni;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -52,4 +58,3 @@ public class User {
     @JsonIgnore
     private Set<Credential> credentials = new HashSet<>();
 }
-

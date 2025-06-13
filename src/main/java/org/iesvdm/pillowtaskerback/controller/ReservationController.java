@@ -5,6 +5,7 @@ import org.iesvdm.pillowtaskerback.domain.Reservation;
 import org.iesvdm.pillowtaskerback.dto.ReservationDTO;
 import org.iesvdm.pillowtaskerback.service.ReservationService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Controller
 public class ReservationController {
     private final ReservationService reservationService;
-
+//    ELIMINAR CLASE SI NO ES NECESARIA
     public ReservationController(ReservationService reservationService){
         this.reservationService = reservationService;
     }
