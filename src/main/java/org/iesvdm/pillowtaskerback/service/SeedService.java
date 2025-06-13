@@ -241,10 +241,53 @@ public class SeedService {
                                 .build()
                 );
 
+        // Invitaciones User 1
+        Invitation user1Invitation = invitationService
+                .sendInvitation(
+                        hotel3.getId(),
+                        Invitation.builder()
+                                .mail("user1@example.com")
+                                .shippingDate(LocalDateTime.now())
+                                .hotel(hotelPrincipal)
+                                .credentialType(CredentialTypeEnum.MAINTENANCE)
+                                .build()
+                );
+        Invitation user1Invitation2 = invitationService
+                .sendInvitation(
+                        hotel4.getId(),
+                        Invitation.builder()
+                                .mail("user1@example.com")
+                                .shippingDate(LocalDateTime.now())
+                                .hotel(hotelPrincipal)
+                                .credentialType(CredentialTypeEnum.MAINTENANCE)
+                                .build()
+                );
+        Invitation user1Invitation3 = invitationService
+                .sendInvitation(
+                        hotel5.getId(),
+                        Invitation.builder()
+                                .mail("user1@example.com")
+                                .shippingDate(LocalDateTime.now())
+                                .hotel(hotelPrincipal)
+                                .credentialType(CredentialTypeEnum.MAINTENANCE)
+                                .build()
+                );
+        Invitation user1Invitation4 = invitationService
+                .sendInvitation(
+                        hotel6.getId(),
+                        Invitation.builder()
+                                .mail("user1@example.com")
+                                .shippingDate(LocalDateTime.now())
+                                .hotel(hotelPrincipal)
+                                .credentialType(CredentialTypeEnum.MAINTENANCE)
+                                .build()
+                );
+
         // Aceptamos las invitaciones principales
         invitationService.processInvitationResponse(invitationRecep.getId(), true, "hotelpass");
         invitationService.processInvitationResponse(invitationCleaner.getId(), true, "hotelpass");
         invitationService.processInvitationResponse(invitationMaintenance.getId(), true, "hotelpass");
+        invitationService.processInvitationResponse(user1Invitation2.getId(), true, "hotelpass");
 
         //-----------------------------------------------------------------
         //------------------ Creación de Habitaciones ---------------------
